@@ -1254,30 +1254,125 @@
     .hero-features { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 768px) {
-    .topnav-inner { padding: 12px 18px; gap: 12px; }
+    .topnav-inner { padding: 12px 16px; gap: 10px; flex-wrap: wrap; }
+    .nav-brand { font-size: 16px; }
     .nav-section { display: none; }
-    .nav-links { gap: 16px; font-size: 13px; }
-    .hero { padding: 44px 20px 16px; }
-    .hero h1 { font-size: 34px; }
-    .hero-lead { font-size: 17px; }
-    .hero-features { grid-template-columns: 1fr; }
-    .dropzone { padding: 36px 20px; }
-    .dashboard { padding: 18px 16px 60px; }
-    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    .footer-inner { grid-template-columns: 1fr; gap: 28px; }
-    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
-    .audience-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .audience-tabs { width: 100%; }
+    .nav-links { gap: 14px; font-size: 14px; }
+    .nav-links a, .nav-links button { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 4px; }
+    .project-context-inner { padding: 10px 16px; gap: 8px; font-size: 11px; word-break: break-word; }
+    .hero { padding: 36px 18px 12px; }
+    .hero h1 { font-size: clamp(28px, 8vw, 36px); }
+    .hero-lead { font-size: 16px; }
+    .hero-features { grid-template-columns: 1fr; padding: 0 18px; gap: 14px; }
+    .upload-wrap { padding: 0 18px 20px; }
+    .dropzone { padding: 32px 18px; min-height: 240px; }
+    .dropzone-title { font-size: 19px; }
+    .dropzone-sub { font-size: 13.5px; }
+    .dashboard { padding: 18px 14px 60px; }
+    .dash-title { font-size: 22px; }
+    .dash-actions { gap: 8px; }
+    .btn { min-height: 44px; padding: 11px 18px; }
+    .btn-sm { min-height: 38px; padding: 9px 14px; font-size: 12px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .kpi-card { padding: 14px 16px; }
+    .kpi-value { font-size: 26px; }
+    .kpi-value.smaller { font-size: 21px; }
+    .footer-inner { grid-template-columns: 1fr; gap: 28px; padding: 0 16px; }
+    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; padding: 0 16px; }
+    .footer-col li { font-size: 14px; }
+    .footer-col li a { display: inline-flex; align-items: center; min-height: 40px; padding: 4px 0; }
+    .audience-bar { flex-direction: column; align-items: stretch; gap: 10px; padding: 12px 14px; }
+    .audience-tabs { width: 100%; overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .audience-tab { padding: 10px 14px; font-size: 11px; min-height: 40px; white-space: nowrap; flex-shrink: 0; }
+    .audience-note { font-size: 12px; }
+    /* View tabs: keep wrapping but ensure tap targets */
+    .view-tabs { gap: 4px; padding: 4px; }
+    .view-tab { padding: 11px 12px; min-height: 40px; font-size: 12.5px; }
+    /* Sheet tabs scroll horizontally and have tap targets */
+    .sheet-tab { padding: 12px 16px; min-height: 44px; font-size: 12px; }
+    /* Charts get reasonable mobile heights */
+    .chart-canvas-wrap { height: 240px; }
+    .chart-canvas-wrap.tall { height: 280px; }
+    .chart-canvas-wrap.short { height: 180px; }
+    .chart-card { padding: 16px; }
+    .chart-card-title { font-size: 16px; }
+    .compare-card { padding: 16px; }
+    .compare-title { font-size: 17px; }
+    /* Filters panel becomes accordion-like on small screens */
+    .filters { padding: 14px; border-radius: 10px; }
+    .filter-search, .filter-date { padding: 9px 10px; min-height: 40px; font-size: 13px; }
+    .filter-option { padding: 8px 0; min-height: 36px; font-size: 14px; }
+    .filter-option input { width: 18px; height: 18px; }
+    .filters-clear { padding: 8px 4px; min-height: 36px; }
+    /* Data table: ensure horizontal scroll and tap-friendly headers */
+    .table-scroll { -webkit-overflow-scrolling: touch; max-height: 480px; }
+    .data-table thead th { padding: 12px 12px; }
+    .data-table tbody td { padding: 10px 12px; max-width: 200px; }
+    .table-search { min-width: 0; width: 100%; min-height: 44px; padding: 10px 12px; }
+    .icon-btn { width: 38px; height: 38px; }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .chart-select { padding: 8px 10px; min-height: 38px; font-size: 12px; }
+    /* Modal mobile-fit */
+    .modal-backdrop { padding: 16px; }
+    .modal { padding: 24px 20px; max-height: 90vh; }
+    .modal-title { font-size: 22px; }
+    .modal-body { font-size: 14px; }
+    .modal-close { width: 44px; height: 44px; font-size: 28px; top: 8px; right: 8px; }
   }
   @media (max-width: 480px) {
+    .topnav-inner { padding: 10px 14px; }
     .nav-links { gap: 12px; }
     .nav-links .nav-hide-sm { display: none; }
-    .hero h1 { font-size: 30px; }
-    .dropzone-title { font-size: 19px; }
+    .hero { padding: 28px 14px 10px; }
+    .hero h1 { font-size: clamp(24px, 8.5vw, 30px); letter-spacing: -0.5px; }
+    .hero-lead { font-size: 15px; }
+    .upload-wrap { padding: 0 14px 18px; }
+    .dropzone { padding: 28px 16px; }
+    .dropzone-title { font-size: 18px; }
+    .dropzone-sub { font-size: 13px; }
+    .dropzone-formats { font-size: 10px; }
     .dropzone-actions { flex-direction: column; gap: 10px; }
     .dropzone-actions .btn { width: 100%; justify-content: center; }
-    .modal { padding: 22px 18px; }
+    .privacy-banner { padding: 12px 14px; }
+    .privacy-banner-text { font-size: 12.5px; }
+    .hero-features { padding: 0 14px; }
+    .modal { padding: 22px 16px; border-radius: 10px; }
+    .modal-title { font-size: 20px; }
+    .modal-section-label { font-size: 10px; letter-spacing: 1.2px; }
     .kpi-grid { grid-template-columns: 1fr; }
+    .kpi-card { padding: 14px 16px; }
+    .dashboard { padding: 16px 12px 56px; }
+    .dash-title { font-size: 20px; word-break: break-word; }
+    .dash-actions { gap: 6px; }
+    .dash-actions .btn-sm { padding: 8px 12px; font-size: 11.5px; }
+    .audience-bar { padding: 10px 12px; }
+    .audience-tab { padding: 9px 12px; font-size: 10.5px; letter-spacing: 0.6px; }
+    .view-tab { padding: 10px 11px; font-size: 12px; }
+    .view-tab svg { width: 12px; height: 12px; }
+    .chart-card { padding: 14px; }
+    .chart-card-header { gap: 8px; }
+    .chart-card-title { font-size: 15px; }
+    .chart-card-controls { gap: 4px; }
+    .chart-canvas-wrap { height: 220px; }
+    .chart-canvas-wrap.tall { height: 260px; }
+    .schema-chip { font-size: 10.5px; padding: 4px 9px; }
+    .filters { padding: 12px; }
+    .filter-label { font-size: 10.5px; }
+    .filter-group { margin-bottom: 14px; padding-bottom: 14px; }
+    .data-table tbody td { max-width: 160px; padding: 9px 10px; font-size: 12.5px; }
+    .data-table thead th { padding: 10px 10px; font-size: 12.5px; }
+    .footer-inner { gap: 22px; padding: 0 14px; }
+    .footer-brand { font-size: 18px; }
+    .empty-state { padding: 36px 18px; }
+    .empty-state-title { font-size: 19px; }
+    .table-search { font-size: 14px; }
+  }
+  @media (max-width: 360px) {
+    .hero h1 { font-size: 22px; }
+    .dash-title { font-size: 18px; }
+    .audience-tab { padding: 8px 10px; font-size: 10px; letter-spacing: 0.4px; }
+    .view-tab { padding: 9px 9px; font-size: 11.5px; }
+    .kpi-value { font-size: 24px; }
   }
 
   /* Print: one-page handout */
