@@ -1516,8 +1516,8 @@
       <h4>Research Context</h4>
       <ul>
         <li><a href="https://food.nullsetlabs.org/community-food-bank/">Community Food Bank Efficiency Project</a></li>
-        <li><a href="https://food.nullsetlabs.org/">Food Systems and Access pillar</a></li>
-        <li><a href="https://nullsetlabs.org/#pillars">All pillars</a></li>
+        <li><a href="https://food.nullsetlabs.org/">Food Systems and Access</a></li>
+        <li><a href="https://nullsetlabs.org/#research">All research</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -3234,42 +3234,4 @@ function renderError(title, detail) {
   main.appendChild(wrap);
 }
 
-/* ---------- WIRE UP ------------------------------------------------- */
-function wireUp() {
-  const dropzone = $('#dropzone');
-  const fileInput = $('#fileInput');
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files[0]) handleFile(e.target.files[0]);
-  });
-  ['dragenter', 'dragover'].forEach(ev => {
-    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add('is-drag'); });
-  });
-  ['dragleave', 'drop'].forEach(ev => {
-    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('is-drag'); });
-  });
-  dropzone.addEventListener('drop', (e) => {
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile(f);
-  });
-  $('#loadSampleBtn').addEventListener('click', loadSample);
-  $('#loadSampleNav').addEventListener('click', loadSample);
-  $('#aboutBtn').addEventListener('click', () => $('#aboutModal').classList.add('is-open'));
-  $('#aboutNav').addEventListener('click', () => $('#aboutModal').classList.add('is-open'));
-  $('#aboutClose').addEventListener('click', () => $('#aboutModal').classList.remove('is-open'));
-  $('#aboutModal').addEventListener('click', (e) => {
-    if (e.target.id === 'aboutModal') $('#aboutModal').classList.remove('is-open');
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') $('#aboutModal').classList.remove('is-open');
-  });
-  $('#newFileBtn').addEventListener('click', resetToUpload);
-  $('#clearFilters').addEventListener('click', clearFilters);
-  $('#exportCsvBtn').addEventListener('click', exportFilteredCsv);
-  $('#printBtn').addEventListener('click', () => window.print());
-}
-
-document.addEventListener('DOMContentLoaded', wireUp);
-
-</script>
-</body>
-</html>
+/* ---------- WIRE UP -------
