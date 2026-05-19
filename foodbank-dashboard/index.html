@@ -3234,4 +3234,111 @@ function renderError(title, detail) {
   main.appendChild(wrap);
 }
 
-/* ---------- WIRE UP -------
+/* ---------- WIRE UP ---------------------------------------------- */
+/* Bind every interactive element to its handler. The script block sits at
+   the very end of <body>, so all referenced DOM elements are parsed by
+   the time this runs. No DOMContentLoaded wrapper needed. */
+
+function openAbout() {
+  const m = document.getElementById('aboutModal');
+  if (m) m.classList.add('is-open');
+}
+function closeAbout() {
+  const m = document.getElementById('aboutModal');
+  if (m) m.classList.remove('is-open');
+}
+
+(function wireUp() {
+  /* File picker: hidden <input type="file"> driven by the dropzone label
+     plus an explicit click fallback. */
+  const fileInput = document.getElementById('fileInput');
+  if (fileInput) {
+    fileInput.addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) handleFile(f);
+    });
+  }
+
+  /* Drag-and-drop on the hero dropzone */
+  const dropzone = document.getElementById('dropzone');
+  if (dropzone) {
+    ['dragenter', 'dragover'].forEach((ev) => {
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('is-drag');
+      });
+    });
+    ['dragleave', 'drop'].forEach((ev) => {
+      dropzone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (ev === 'dragleave' && dropzone.contains(e.relatedTarget)) return;
+        dropzone.classList.remove('is-drag');
+      });
+    });
+    dropzone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const f = dt && dt.files && dt.files[0];
+      if (f) handleFile(f);
+    });
+  }
+
+  /* "Try the sample workbook" buttons (hero + nav variants) */
+  const sampleBtnHero = document.getElementById('loadSampleBtn');
+  if (sampleBtnHero) sampleBtnHero.addEventListener('click', (e) => {
+    e.preventDefault();
+    loadSample();
+  });
+  const sampleBtnNav = document.getElementById('loadSampleNav');
+  if (sampleBtnNav) sampleBtnNav.addEventListener('click', (e) => {
+    e.preventDefault();
+    loadSample();
+  });
+
+  /* "How it works" modal: open from button or nav link, close from X, backdrop, or Escape */
+  const aboutBtn = document.getElementById('aboutBtn');
+  if (aboutBtn) aboutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openAbout();
+  });
+  const aboutNav = document.getElementById('aboutNav');
+  if (aboutNav) aboutNav.addEventListener('click', (e) => {
+    e.preventDefault();
+    openAbout();
+  });
+  const aboutClose = document.getElementById('aboutClose');
+  if (aboutClose) aboutClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    closeAbout();
+  });
+  const aboutModal = document.getElementById('aboutModal');
+  if (aboutModal) {
+    aboutModal.addEventListener('click', (e) => {
+      /* Close when clicking the backdrop, not the modal body */
+      if (e.target === aboutModal) closeAbout();
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAbout();
+  });
+
+  /* Dashboard controls */
+  const clearBtn = document.getElementById('clearFilters');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    clearFilters();
+    renderFilters();
+    renderRowCount();
+    renderViews();
+  });
+  const exportBtn = document.getElementById('exportCsvBtn');
+  if (exportBtn) exportBtn.addEventListener('click', exportFilteredCsv);
+  const newFileBtn = document.getElementById('newFileBtn');
+  if (newFileBtn) newFileBtn.addEventListener('click', resetToUpload);
+  const printBtn = document.getElementById('printBtn');
+  if (printBtn) printBtn.addEventListener('click', () => window.print());
+})();
+</script>
+
+</body>
+</html>
