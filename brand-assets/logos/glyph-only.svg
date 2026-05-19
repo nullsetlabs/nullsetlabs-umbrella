@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Null Set Labs glyph">
+  <defs>
+    <linearGradient id="slashGradient" x1="15%" y1="85%" x2="85%" y2="15%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#7d7a7a"/>
+      <stop offset="100%" stop-color="#c19a5b"/>
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="74" fill="none" stroke="#c19a5b" stroke-width="4.5"/>
+  <line x1="42" y1="158" x2="158" y2="42" stroke="url(#slashGradient)" stroke-width="9" stroke-linecap="round"/>
+</svg>

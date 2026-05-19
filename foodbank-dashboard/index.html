@@ -1,0 +1,3275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pantry Dashboard | Null Set Labs</title>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-R1S9F2Z4HS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-R1S9F2Z4HS');
+</script>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nullsetlabs.org/foodbank-dashboard/">
+<meta property="og:title" content="Pantry Dashboard, Null Set Labs">
+<meta property="og:description" content="A browser-based dashboard for food bank operations. Upload an intake spreadsheet and see monthly totals, donor concentration, distribution, and trends. Data stays on your device.">
+<meta property="og:image" content="https://nullsetlabs.org/foodbank-dashboard/og-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="Null Set Labs">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pantry Dashboard, Null Set Labs">
+<meta name="twitter:description" content="A browser-based dashboard for food bank operations. Data stays on your device.">
+<meta name="twitter:image" content="https://nullsetlabs.org/foodbank-dashboard/og-preview.png">
+
+<!-- General Meta -->
+<meta name="description" content="Pantry Dashboard. A browser-based, audience-aware dashboard for food bank intake and distribution data. The public deliverable of the Community Food Bank Efficiency Project at Null Set Labs.">
+<meta name="author" content="Null Set Labs">
+<link rel="canonical" href="https://nullsetlabs.org/foodbank-dashboard/">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0a0a0f">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="https://nullsetlabs.org/brand-assets/favicons/favicon.svg">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #15151d;
+    --surface-2: #1d1d27;
+    --border: #26262f;
+    --border-strong: #353541;
+    --text: #ededeb;
+    --text-dim: #8a8a92;
+    --text-dimmer: #5e5e66;
+    --accent: #c19a5b;
+    --accent-bright: #d4b076;
+    --accent-soft: rgba(193, 154, 91, 0.12);
+    --accent-border: rgba(193, 154, 91, 0.28);
+    --brand-blue: #3b82f6;
+    --live: #4ade80;
+    --live-bg: rgba(74, 222, 128, 0.12);
+    --progress: #fbbf24;
+    --progress-bg: rgba(251, 191, 36, 0.12);
+    --soon: #8a8a92;
+    --soon-bg: rgba(138, 138, 146, 0.12);
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.12);
+    --max-width: 1320px;
+    --max-text: 680px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-feature-settings: "kern", "liga", "ss01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: inherit; cursor: pointer; }
+  ::selection { background: var(--accent-soft); color: var(--accent-bright); }
+
+  /* ============ TOP NAV ============ */
+  .topnav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 10, 15, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .topnav-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: 17px;
+    letter-spacing: 0.2px;
+    color: var(--text);
+  }
+  .nav-brand-glyph { width: 22px; height: 22px; color: var(--accent); }
+  .nav-section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .nav-section .slash { color: var(--text-dimmer); margin: 0 8px; }
+  .nav-section .here { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+  .nav-links a, .nav-links button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover, .nav-links button:hover { color: var(--accent); }
+
+  /* ============ HERO (upload state) ============ */
+  .hero {
+    max-width: var(--max-text);
+    margin: 0 auto;
+    padding: 64px 24px 24px;
+    text-align: center;
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: clamp(38px, 6vw, 60px);
+    letter-spacing: -1px;
+    color: var(--text);
+    margin-bottom: 18px;
+    line-height: 1.05;
+  }
+  .hero-lead {
+    font-family: 'Newsreader', serif;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    margin: 0 auto 24px;
+    max-width: 620px;
+  }
+
+  .upload-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 24px;
+  }
+  .dropzone {
+    border: 1.5px dashed var(--border-strong);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 56px 32px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: block;
+  }
+  .dropzone:hover, .dropzone.is-drag {
+    border-color: var(--accent);
+    background: var(--surface-2);
+  }
+  .dropzone-icon {
+    width: 44px;
+    height: 44px;
+    color: var(--accent);
+    margin: 0 auto 14px;
+    display: block;
+  }
+  .dropzone-title {
+    font-family: 'Newsreader', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .dropzone-sub {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 18px;
+  }
+  .dropzone-formats {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+  }
+  .dropzone-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 22px 0 8px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    background: transparent;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .btn-primary {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+  }
+  .btn svg { width: 14px; height: 14px; }
+  .btn-sm { padding: 7px 12px; font-size: 12px; }
+
+  .privacy-banner {
+    max-width: 760px;
+    margin: 16px auto 0;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+  }
+  .privacy-banner svg {
+    width: 18px;
+    height: 18px;
+    color: var(--live);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .privacy-banner-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+  .privacy-banner-text strong { color: var(--text); font-weight: 600; }
+
+  .hero-features {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    max-width: 880px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+  }
+  .hero-feature { text-align: left; }
+  .hero-feature-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .hero-feature-text {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* ============ DASHBOARD ============ */
+  .dashboard {
+    display: none;
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 24px 24px 80px;
+  }
+  .dashboard.is-active { display: block; }
+
+  .dash-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .dash-title-block { min-width: 0; }
+  .dash-title {
+    font-family: 'Newsreader', serif;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    line-height: 1.2;
+    word-break: break-word;
+  }
+  .dash-title-meta {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+  .dash-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Audience toggle */
+  .audience-bar {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .audience-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .audience-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+    flex-wrap: wrap;
+  }
+  .audience-tab {
+    padding: 7px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .audience-tab:hover { color: var(--text); }
+  .audience-tab.is-active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .audience-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    flex: 1;
+    min-width: 200px;
+  }
+  .audience-note strong { color: var(--text); font-weight: 600; }
+
+  /* Project context strip (breadcrumb back to the research project) */
+  .project-context {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .project-context-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.4px;
+  }
+  .project-context-label {
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    font-size: 11px;
+  }
+  .project-context-sep {
+    color: var(--text-dimmer);
+  }
+  .project-context-link {
+    color: var(--text);
+    transition: color 0.2s;
+    border-bottom: 1px solid var(--accent-border);
+  }
+  .project-context-link:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .project-context-note {
+    color: var(--text-dimmer);
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
+  @media (max-width: 768px) {
+    .project-context-inner { padding: 10px 20px; gap: 8px; font-size: 11px; }
+  }
+
+  /* Sheet tabs */
+  .sheet-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 18px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .sheet-tab {
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .sheet-tab:hover { color: var(--text); }
+  .sheet-tab.is-active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* View tabs (Monthly, Department, Donor, Distribution, Trends, Raw) */
+  .view-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    padding: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .view-tab {
+    padding: 9px 14px;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: var(--text-dim);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .view-tab svg { width: 13px; height: 13px; }
+  .view-tab:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+  .view-tab.is-active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent-border);
+  }
+
+  /* Layout: filters + main */
+  .dash-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+
+  /* Filter panel */
+  .filters {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    position: sticky;
+    top: 70px;
+    max-height: calc(100vh - 90px);
+    overflow-y: auto;
+  }
+  .filters-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .filters-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .filters-clear {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .filters-clear:hover { color: var(--accent-bright); }
+  .row-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .row-count strong {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .filter-group {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-group:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .filter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .filter-type-chip {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+  }
+  .filter-search {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    padding: 6px 8px;
+    margin-bottom: 8px;
+  }
+  .filter-search:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .filter-options {
+    max-height: 160px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .filter-option input { accent-color: var(--accent); cursor: pointer; }
+  .filter-option-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .filter-option-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dimmer);
+  }
+  .filter-date-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .filter-date {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    padding: 6px 8px;
+    color-scheme: dark;
+  }
+  .filter-date:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .filter-date-sep {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+  }
+
+  /* Main column */
+  .dash-main { min-width: 0; }
+  .section-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+  .section-heading:first-child { margin-top: 0; }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+  }
+  .kpi-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    font-size: 30px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .kpi-value.smaller { font-size: 24px; }
+  .kpi-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    letter-spacing: 0.5px;
+  }
+  .kpi-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+  }
+  .kpi-delta.up { color: var(--live); background: var(--live-bg); }
+  .kpi-delta.down { color: var(--danger); background: var(--danger-bg); }
+  .kpi-delta.flat { color: var(--text-dim); background: var(--soon-bg); }
+
+  /* Chart grid */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .chart-card.full-width { grid-column: 1 / -1; }
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .chart-card-title {
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.2px;
+  }
+  .chart-card-subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-top: 2px;
+  }
+  .chart-card-controls {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .chart-select {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+  .chart-select:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+  .icon-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    padding: 0;
+  }
+  .icon-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent-border);
+  }
+  .icon-btn svg { width: 14px; height: 14px; }
+  .chart-canvas-wrap {
+    position: relative;
+    height: 260px;
+  }
+  .chart-canvas-wrap.tall { height: 320px; }
+  .chart-canvas-wrap.short { height: 200px; }
+  .chart-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-dimmer);
+    font-size: 13px;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+  }
+
+  /* Comparison split */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .compare-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .compare-title {
+    font-family: 'Newsreader', serif;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .compare-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 10px;
+  }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-row-label {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .compare-row-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* Donor table & rank table */
+  .rank-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rank-table th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+  }
+  .rank-table th.num, .rank-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .rank-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .rank-table tr:last-child td { border-bottom: none; }
+  .rank-table .rank-pos {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    width: 28px;
+  }
+  .rank-bar {
+    background: var(--surface-2);
+    border-radius: 3px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .rank-bar-fill {
+    background: var(--accent);
+    height: 100%;
+  }
+
+  /* Data table */
+  .table-scroll {
+    overflow: auto;
+    max-height: 520px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-2);
+    color: var(--text);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1;
+  }
+  .data-table thead th:hover { color: var(--accent); }
+  .data-table thead th .col-type {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .data-table thead th .sort-indicator {
+    color: var(--text-dimmer);
+    margin-left: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .data-table thead th.is-sorted .sort-indicator { color: var(--accent); }
+  .data-table tbody td {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+    white-space: nowrap;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .data-table tbody td.is-empty { color: var(--text-dimmer); font-style: italic; }
+  .data-table tbody tr:hover td {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .table-footer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dimmer);
+    padding-top: 10px;
+    text-align: right;
+    letter-spacing: 0.5px;
+  }
+  .table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .table-search {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    padding: 8px 10px;
+    min-width: 220px;
+    flex: 1;
+  }
+  .table-search:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+
+  /* Empty / error states */
+  .empty-state {
+    background: var(--surface);
+    border: 1px dashed var(--border-strong);
+    border-radius: 12px;
+    padding: 48px 32px;
+    text-align: center;
+    color: var(--text-dim);
+  }
+  .empty-state-title {
+    font-family: 'Newsreader', serif;
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .empty-state p {
+    font-size: 14px;
+    margin-bottom: 18px;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .error-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    color: var(--text-dim);
+    max-width: 540px;
+    margin: 0 auto 18px;
+    text-align: left;
+    overflow-x: auto;
+  }
+  .loader {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid var(--border-strong);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Schema chips */
+  .schema-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .schema-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .schema-chip strong { color: var(--accent); font-weight: 600; }
+
+  /* Modal */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.78);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-backdrop.is-open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-width: 620px;
+    width: 100%;
+    max-height: 86vh;
+    overflow-y: auto;
+    padding: 28px 32px;
+  }
+  .modal-title {
+    font-family: 'Newsreader', serif;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 16px;
+    letter-spacing: -0.3px;
+  }
+  .modal-body { font-size: 14.5px; color: var(--text-dim); line-height: 1.65; }
+  .modal-body p { margin-bottom: 14px; }
+  .modal-body strong { color: var(--text); font-weight: 600; }
+  .modal-body a { color: var(--accent); }
+  .modal-body a:hover { color: var(--accent-bright); }
+  .modal-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 20px 0 8px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 24px;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { color: var(--text); background: var(--surface-2); }
+  .modal-wrap { position: relative; }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    margin-top: 64px;
+  }
+  .footer-inner {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 40px;
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Newsreader', serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .footer-brand-glyph { width: 24px; height: 24px; color: var(--accent); }
+  .footer-copy {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 360px;
+  }
+  .footer-col h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dimmer);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li {
+    margin-bottom: 9px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .footer-col li a { transition: color 0.2s; }
+  .footer-col li a:hover { color: var(--accent); }
+  .footer-bottom {
+    max-width: var(--max-width);
+    margin: 28px auto 0;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-dimmer);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--accent-border);
+    color: var(--text);
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  .toast.is-visible { opacity: 1; }
+
+  /* Audience-driven visibility */
+  body[data-audience="public"] .pii-cell,
+  body[data-audience="donors"] .pii-cell {
+    color: var(--text-dimmer) !important;
+    font-style: italic;
+  }
+
+  /* View visibility */
+  .view-panel { display: none; }
+  .view-panel.is-active { display: block; }
+
+  /* Mobile */
+  @media (max-width: 1080px) {
+    .dash-layout { grid-template-columns: 1fr; }
+    .filters { position: static; max-height: none; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .hero-features { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .topnav-inner { padding: 12px 18px; gap: 12px; }
+    .nav-section { display: none; }
+    .nav-links { gap: 16px; font-size: 13px; }
+    .hero { padding: 44px 20px 16px; }
+    .hero h1 { font-size: 34px; }
+    .hero-lead { font-size: 17px; }
+    .hero-features { grid-template-columns: 1fr; }
+    .dropzone { padding: 36px 20px; }
+    .dashboard { padding: 18px 16px 60px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { grid-template-columns: 1fr; gap: 28px; }
+    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+    .audience-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .audience-tabs { width: 100%; }
+  }
+  @media (max-width: 480px) {
+    .nav-links { gap: 12px; }
+    .nav-links .nav-hide-sm { display: none; }
+    .hero h1 { font-size: 30px; }
+    .dropzone-title { font-size: 19px; }
+    .dropzone-actions { flex-direction: column; gap: 10px; }
+    .dropzone-actions .btn { width: 100%; justify-content: center; }
+    .modal { padding: 22px 18px; }
+    .kpi-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Print: one-page handout */
+  @media print {
+    body { background: white; color: black; }
+    .topnav, .audience-bar, .view-tabs, .filters, .dash-actions, footer, .toast { display: none !important; }
+    .dashboard { padding: 0; max-width: 100%; }
+    .dash-layout { grid-template-columns: 1fr; }
+    .chart-card, .kpi-card, .compare-card {
+      background: white;
+      border: 1px solid #ccc;
+      color: black;
+      page-break-inside: avoid;
+    }
+    .kpi-value { color: #9c7a3e; }
+    .chart-card-title { color: black; }
+    .section-heading { color: #555; }
+    .view-panel { display: block !important; page-break-before: always; }
+    .view-panel:first-child { page-break-before: auto; }
+  }
+</style>
+</head>
+<body data-audience="staff">
+
+<!-- ============ TOP NAV ============ -->
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a href="https://nullsetlabs.org/" class="nav-brand" aria-label="Null Set Labs home">
+      <svg class="nav-brand-glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navSlash" x1="20%" y1="80%" x2="80%" y2="20%">
+            <stop offset="0%" stop-color="#3b82f6"/>
+            <stop offset="100%" stop-color="#c19a5b"/>
+          </linearGradient>
+        </defs>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <line x1="5.5" y1="18.5" x2="18.5" y2="5.5" stroke="url(#navSlash)" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      Null Set Labs
+    </a>
+    <div class="nav-section">
+      <span>Food Systems</span><span class="slash">/</span><span class="here">Pantry Dashboard</span>
+    </div>
+    <div class="nav-links">
+      <button id="loadSampleNav" class="nav-hide-sm">Sample data</button>
+      <button id="aboutNav">About</button>
+      <a href="https://nullsetlabs.org/" class="nav-hide-sm">Home</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ PROJECT CONTEXT STRIP ============ -->
+<div class="project-context" role="note" aria-label="Research project context">
+  <div class="project-context-inner">
+    <span class="project-context-label">Research deliverable</span>
+    <span class="project-context-sep">/</span>
+    <span>Public output of the <a class="project-context-link" href="https://food.nullsetlabs.org/community-food-bank/">Community Food Bank Efficiency Project</a> at Null Set Labs.</span>
+    <span class="project-context-note">For research and exploratory purposes only.</span>
+  </div>
+</div>
+
+<!-- ============ HERO ============ -->
+<section id="heroSection">
+  <div class="hero">
+    <div class="hero-label">Open Tool / Free / Built for Food Banks</div>
+    <h1>A dashboard for your food bank.</h1>
+    <p class="hero-lead">Upload your intake spreadsheet, in any layout, and the page builds an operational dashboard around it: monthly totals, donor concentration, distribution, and trends. Filter by department or date. Switch the audience setting to share with donors, board, or the public without exposing sensitive fields.</p>
+  </div>
+
+  <div class="upload-wrap">
+    <label for="fileInput" class="dropzone" id="dropzone">
+      <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="dropzone-title">Drop your intake file here, or click to choose</div>
+      <div class="dropzone-sub">Wide-sparse layouts welcome. Departments only fill in their columns; the dashboard handles the rest.</div>
+      <div class="dropzone-formats">.xlsx &middot; .xls &middot; .csv</div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none">
+    </label>
+    <div class="dropzone-actions">
+      <button class="btn btn-primary" id="loadSampleBtn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M14 2v6h6M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Try the sample workbook
+      </button>
+      <button class="btn" id="aboutBtn">How it works</button>
+    </div>
+    <div class="privacy-banner">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="privacy-banner-text">
+        <strong>Your data never leaves this browser.</strong> The page parses your file locally in JavaScript. No server upload. No analytics that touch your rows. Donor names and household counts stay on your device. Close the tab and the file is gone.
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-features">
+    <div class="hero-feature">
+      <div class="hero-feature-label">Audience-aware</div>
+      <div class="hero-feature-text">One toggle changes what is visible: staff, board, donors, or public.</div>
+    </div>
+    <div class="hero-feature">
+      <div class="hero-feature-label">Wide-sparse</div>
+      <div class="hero-feature-text">Blank cells are treated as not-applicable, not missing data.</div>
+    </div>
+    <div class="hero-feature">
+      <div class="hero-feature-label">Pre-built views</div>
+      <div class="hero-feature-text">Monthly, departments, donors, distribution, trends, raw data.</div>
+    </div>
+    <div class="hero-feature">
+      <div class="hero-feature-label">Export</div>
+      <div class="hero-feature-text">Charts to PNG, filtered data to CSV, one-page printable handout.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<main class="dashboard" id="dashboard">
+
+  <!-- Title row -->
+  <div class="dash-bar">
+    <div class="dash-title-block">
+      <div class="dash-title" id="dashTitle">Untitled</div>
+      <div class="dash-title-meta" id="dashMeta"></div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn btn-sm" id="exportCsvBtn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        CSV
+      </button>
+      <button class="btn btn-sm" id="printBtn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Print
+      </button>
+      <button class="btn btn-sm" id="newFileBtn">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M12 8v6M9 11h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20" cy="6" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        New file
+      </button>
+    </div>
+  </div>
+
+  <!-- Audience toggle -->
+  <div class="audience-bar">
+    <div class="audience-label">Audience</div>
+    <div class="audience-tabs" id="audienceTabs"></div>
+    <div class="audience-note" id="audienceNote"></div>
+  </div>
+
+  <!-- Schema chips -->
+  <div class="schema-summary" id="schemaSummary"></div>
+
+  <!-- Sheet tabs -->
+  <div class="sheet-tabs" id="sheetTabs"></div>
+
+  <!-- View tabs -->
+  <div class="view-tabs" id="viewTabs"></div>
+
+  <div class="dash-layout">
+    <aside class="filters" id="filtersPanel">
+      <div class="filters-header">
+        <div class="filters-title">Filters</div>
+        <button class="filters-clear" id="clearFilters">Clear all</button>
+      </div>
+      <div class="row-count" id="rowCount">Showing 0 of 0 rows</div>
+      <div id="filtersList"></div>
+    </aside>
+
+    <div class="dash-main" id="dashMain">
+      <!-- View panels injected by JS -->
+    </div>
+  </div>
+</main>
+
+<!-- ============ ABOUT MODAL ============ -->
+<div class="modal-backdrop" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+  <div class="modal-wrap">
+    <div class="modal">
+      <button class="modal-close" id="aboutClose" aria-label="Close">&times;</button>
+      <h2 class="modal-title" id="aboutTitle">About the Pantry Dashboard.</h2>
+      <div class="modal-body">
+        <p>Pantry Dashboard is a browser-based, audience-aware dashboard for food bank operations. The project grew out of a data analysis support engagement with a local Pennsylvania food bank, and is generic enough that any food bank with a similar intake spreadsheet can adopt it. <strong>For research and exploratory purposes only.</strong> Not a substitute for operational decision-making without independent verification.</p>
+
+        <div class="modal-section-label">How it works</div>
+        <p>You drop your intake file onto the page. The dashboard auto-detects which columns are dates, departments, donors, recipient sites, pounds, and households. Wide-sparse data is handled by design: each department fills only its columns, and empty cells are treated as not-applicable rather than missing.</p>
+
+        <div class="modal-section-label">Audience layering</div>
+        <p>One toggle switches between four audience modes: Internal staff, Board and executive, Donors, and Public. Each mode shows or hides specific views and fields. The board view drops row-level data and emphasizes trend lines. The donor view emphasizes intake and aggregated impact. The public view aggregates everything and removes donor names entirely.</p>
+
+        <div class="modal-section-label">Privacy</div>
+        <p><strong>Your file never leaves your browser.</strong> Parsing happens in JavaScript on your device. There is no server upload, no account, and no analytics that touch the contents of your data. Close the tab and the file is gone.</p>
+
+        <div class="modal-section-label">Built by</div>
+        <p>Null Set Labs, a youth-led research lab. The dashboard is part of the lab's <em>Open</em> track: tools released as a public good. See <a href="https://nullsetlabs.org/">nullsetlabs.org</a>.</p>
+
+        <div class="modal-section-label">Source and license</div>
+        <p>Pantry Dashboard is open source under CC BY-NC 4.0. Source: <a href="https://github.com/nullsetlabs/foodbank-dashboard" target="_blank" rel="noopener">github.com/nullsetlabs/foodbank-dashboard</a>.</p>
+
+        <div class="modal-section-label">Libraries</div>
+        <p>Parsing uses <a href="https://sheetjs.com/" target="_blank" rel="noopener">SheetJS</a>. Charts use <a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a>. Both load from public CDNs.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-col">
+      <a href="https://nullsetlabs.org/" class="footer-brand" aria-label="Null Set Labs home">
+        <svg class="footer-brand-glyph" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="footerSlash" x1="20%" y1="80%" x2="80%" y2="20%">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#c19a5b"/>
+            </linearGradient>
+          </defs>
+          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <line x1="5.5" y1="18.5" x2="18.5" y2="5.5" stroke="url(#footerSlash)" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        Null Set Labs
+      </a>
+      <p class="footer-copy">Pantry Dashboard is part of the lab's open tools track. First principles. Open tools. Public good.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Research Context</h4>
+      <ul>
+        <li><a href="https://food.nullsetlabs.org/community-food-bank/">Community Food Bank Efficiency Project</a></li>
+        <li><a href="https://food.nullsetlabs.org/">Food Systems and Access pillar</a></li>
+        <li><a href="https://nullsetlabs.org/#pillars">All pillars</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:research@nullsetlabs.org">research@nullsetlabs.org</a></li>
+        <li><a href="https://github.com/nullsetlabs">github.com/nullsetlabs</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Null Set Labs</span>
+    <span>v1.0 / CC BY-NC 4.0</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============ LIBRARIES ============ -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<script>
+/* ===================================================================
+   Pantry Dashboard - Null Set Labs
+   Client-side, audience-aware food bank operations dashboard.
+   =================================================================== */
+
+/* ---------- AUDIENCE CONFIG (editable per food bank) ----------------
+   Each audience can:
+   - hide whole views (by viewId)
+   - hide specific column types from raw data (donor, identifier, etc.)
+   - hide specific KPI cards
+   - hide specific charts
+   - replace donor names with anonymized labels in tables/charts
+*/
+const AUDIENCE_CONFIG = {
+  staff: {
+    label: 'Internal staff',
+    description: 'Full visibility: every column, every row, every metric.',
+    views: ['overview', 'departments', 'donors', 'distribution', 'trends', 'compare', 'raw'],
+    hideKpis: [],
+    hideCharts: [],
+    hideRawCols: [],         // role labels: 'identifier', 'donor', 'recipient', 'note'
+    anonymizeDonors: false,
+    showRawRows: true,
+  },
+  board: {
+    label: 'Board / executive',
+    description: 'High-level metrics, trends, comparisons. No row-level data.',
+    views: ['overview', 'departments', 'trends', 'compare'],
+    hideKpis: [],
+    hideCharts: [],
+    hideRawCols: ['identifier', 'note'],
+    anonymizeDonors: false,
+    showRawRows: false,
+  },
+  donors: {
+    label: 'Donors',
+    description: 'Intake-focused. Donor-side metrics and aggregate impact. No internal IDs.',
+    views: ['overview', 'departments', 'donors', 'trends'],
+    hideKpis: ['distribution_gap'],
+    hideCharts: ['site_distribution'],
+    hideRawCols: ['identifier'],
+    anonymizeDonors: false,
+    showRawRows: true,
+  },
+  public: {
+    label: 'Public',
+    description: 'Aggregated only. No donor names. No identifiers. No row-level data.',
+    views: ['overview', 'departments', 'trends'],
+    hideKpis: [],
+    hideCharts: ['top_donors', 'donor_type_mix'],
+    hideRawCols: ['identifier', 'donor', 'note'],
+    anonymizeDonors: true,
+    showRawRows: false,
+  },
+};
+
+/* ---------- COLUMN ROLE DETECTION PATTERNS ----------------------------
+   Heuristics for identifying real food bank fields by header name.
+   Order matters: identifier and date are checked first so they win over
+   weaker matches.
+*/
+const ROLE_PATTERNS = [
+  { role: 'identifier', match: /(^|[\s_-])(email|submission\s*id|record\s*id|response\s*id|entry\s*id|id$|uuid)([\s_-]|$)/i },
+  { role: 'date',       match: /(date|datetime|timestamp|month|period|when)/i },
+  { role: 'department', match: /(department|category|food[\s_-]?type|product[\s_-]?type|item[\s_-]?type|class)/i },
+  { role: 'donor',      match: /(donor|source|partner|organi[sz]ation|contributor|sponsor)/i },
+  { role: 'donor_type', match: /(donor[\s_-]?type|source[\s_-]?type|partner[\s_-]?type|sector)/i },
+  { role: 'recipient',  match: /(recipient|distribution[\s_-]?site|^site$|location|pantry|hub|center|agency)/i },
+  { role: 'pounds_in',  match: /(pounds?[\s_-]?(received|donated|in|collected)|lbs?[\s_-]?(received|donated|in)|weight[\s_-]?(in|received)|received[\s_-]?(pounds?|lbs?|weight))/i },
+  { role: 'pounds_out', match: /(distributed|delivered|out|outgoing)[\s_-]?(pounds?|lbs?|weight)|pounds?[\s_-]?(distributed|delivered|out)/i },
+  { role: 'pounds',     match: /(pounds?|lbs?|weight)/i },
+  { role: 'items',      match: /(item[\s_-]?count|units|quantity|count$|num[\s_-]?items)/i },
+  { role: 'households', match: /(households?|families|hh|served|clients)/i },
+  { role: 'note',       match: /(note|comment|description|memo|details?)/i },
+];
+
+/* ---------- STATE ---------------------------------------------------- */
+const state = {
+  fileName: '',
+  workbook: null,
+  sheets: {},          // {sheetName: {rows, columns, schema, roles}}
+  activeSheet: null,
+  activeView: 'overview',
+  audience: 'staff',
+  filters: {},         // {col: {selected: Set<string>} | {min, max}}
+  tableSearch: '',
+  tableSort: { col: null, dir: 'asc' },
+  charts: {},          // {chartId: ChartInstance}
+};
+
+/* ---------- UTILITIES ----------------------------------------------- */
+const $  = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+function el(tag, opts = {}) {
+  const node = document.createElement(tag);
+  if (opts.cls)  node.className   = opts.cls;
+  if (opts.text) node.textContent = opts.text;
+  if (opts.html) node.innerHTML   = opts.html;
+  if (opts.attrs) for (const k in opts.attrs) node.setAttribute(k, opts.attrs[k]);
+  return node;
+}
+
+function fmtNum(n, decimals = 0) {
+  if (n === null || n === undefined || isNaN(n)) return '0';
+  const opts = { minimumFractionDigits: decimals, maximumFractionDigits: decimals };
+  return n.toLocaleString('en-US', opts);
+}
+
+function fmtLbs(n) {
+  if (n === null || n === undefined || isNaN(n)) return '0 lbs';
+  if (Math.abs(n) >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M lbs';
+  if (Math.abs(n) >= 10_000) return (n / 1000).toFixed(1) + 'K lbs';
+  return fmtNum(n, n % 1 ? 1 : 0) + ' lbs';
+}
+
+function fmtPct(n) {
+  if (n === null || n === undefined || isNaN(n) || !isFinite(n)) return '0%';
+  const sign = n >= 0 ? '+' : '';
+  return sign + n.toFixed(1) + '%';
+}
+
+function fmtMonth(d) {
+  if (!(d instanceof Date)) d = new Date(d);
+  return d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+}
+
+function fmtDate(d) {
+  if (!(d instanceof Date)) d = new Date(d);
+  if (isNaN(d.getTime())) return '';
+  return d.toISOString().slice(0, 10);
+}
+
+function showToast(msg, ms = 2400) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('is-visible');
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => t.classList.remove('is-visible'), ms);
+}
+
+function downloadBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 500);
+}
+
+/* ---------- COERCION ------------------------------------------------ */
+function coerceDate(v) {
+  if (v instanceof Date && !isNaN(v.getTime())) return v;
+  if (typeof v === 'number') {
+    if (v > 20000 && v < 80000) {
+      const epoch = Date.UTC(1899, 11, 30);
+      const d = new Date(epoch + v * 86400000);
+      if (!isNaN(d.getTime()) && d.getFullYear() > 1900 && d.getFullYear() < 2100) return d;
+    }
+    return null;
+  }
+  if (typeof v !== 'string') return null;
+  const s = v.trim();
+  if (s.length < 6 || s.length > 30) return null;
+  if (/^\d+(\.\d+)?$/.test(s)) return null;
+  if (!/[\/\-\.]/.test(s)) return null;
+  const d = new Date(s);
+  if (!isNaN(d.getTime()) && d.getFullYear() > 1900 && d.getFullYear() < 2100) return d;
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (m) {
+    let yr = parseInt(m[3], 10);
+    if (yr < 100) yr += 2000;
+    const d2 = new Date(yr, parseInt(m[1], 10) - 1, parseInt(m[2], 10));
+    if (!isNaN(d2.getTime())) return d2;
+  }
+  return null;
+}
+
+function coerceNumber(v) {
+  if (typeof v === 'number' && isFinite(v)) return v;
+  if (typeof v === 'string') {
+    const s = v.trim().replace(/,/g, '').replace(/^\$/, '').replace(/%$/, '');
+    if (s === '') return null;
+    const n = Number(s);
+    if (!isNaN(n) && isFinite(n)) return n;
+  }
+  return null;
+}
+
+/* ---------- FILE INTAKE --------------------------------------------- */
+function handleFile(file) {
+  state.fileName = file.name;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const wb = XLSX.read(data, { type: 'array', cellDates: true });
+      ingestWorkbook(wb);
+    } catch (err) {
+      renderError('Could not parse this file.', err.message || String(err));
+    }
+  };
+  reader.onerror = () => renderError('Could not read this file.', 'FileReader error.');
+  reader.readAsArrayBuffer(file);
+}
+
+function loadSample() {
+  showToast('Loading sample workbook...');
+  fetch('./sample-data/pantry-sample.xlsx')
+    .then(r => {
+      if (!r.ok) throw new Error('Sample file not found at ./sample-data/pantry-sample.xlsx');
+      return r.arrayBuffer();
+    })
+    .then(buf => {
+      state.fileName = 'pantry-sample.xlsx';
+      const wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true });
+      ingestWorkbook(wb);
+    })
+    .catch(err => renderError('Could not load the sample.', err.message));
+}
+
+function resetToUpload() {
+  destroyAllCharts();
+  state.sheets = {};
+  state.workbook = null;
+  state.activeSheet = null;
+  state.filters = {};
+  state.tableSearch = '';
+  state.tableSort = { col: null, dir: 'asc' };
+  $('#heroSection').style.display = '';
+  $('#dashboard').classList.remove('is-active');
+  $('#fileInput').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function destroyAllCharts() {
+  for (const k in state.charts) {
+    try { state.charts[k].destroy(); } catch (e) {}
+  }
+  state.charts = {};
+}
+
+function ingestWorkbook(wb) {
+  state.workbook = wb;
+  state.sheets = {};
+  for (const name of wb.SheetNames) {
+    const ws = wb.Sheets[name];
+    const parsed = parseSheet(ws);
+    if (parsed) state.sheets[name] = parsed;
+  }
+  if (Object.keys(state.sheets).length === 0) {
+    renderError('The file looks empty.', 'No usable rows or columns were found in any sheet.');
+    return;
+  }
+  state.activeSheet = Object.keys(state.sheets)[0];
+  state.activeView = 'overview';
+  state.filters = {};
+  $('#heroSection').style.display = 'none';
+  $('#dashboard').classList.add('is-active');
+  renderDashboard();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---------- SHEET PARSING -------------------------------------------- */
+function parseSheet(ws) {
+  const aoa = XLSX.utils.sheet_to_json(ws, {
+    header: 1, raw: true, defval: null, blankrows: false,
+  });
+  if (!aoa || aoa.length === 0) return null;
+
+  // Find header row.
+  let headerIdx = 0;
+  for (let i = 0; i < Math.min(aoa.length, 12); i++) {
+    const row = aoa[i] || [];
+    const stringCells = row.filter(c => typeof c === 'string' && c.trim() !== '');
+    const nonNull = row.filter(c => c !== null && c !== undefined && c !== '');
+    if (stringCells.length >= 2 && stringCells.length >= nonNull.length * 0.6 &&
+        i + 1 < aoa.length && aoa[i + 1].some(c => c !== null && c !== '')) {
+      headerIdx = i;
+      break;
+    }
+  }
+
+  const rawHeaders = aoa[headerIdx] || [];
+  const dataRows = aoa.slice(headerIdx + 1);
+
+  const colIdxs = [];
+  const headers = [];
+  for (let c = 0; c < rawHeaders.length; c++) {
+    const h = rawHeaders[c];
+    const hasHeader = h !== null && h !== undefined && String(h).trim() !== '';
+    const hasData = dataRows.some(r => r[c] !== null && r[c] !== undefined && r[c] !== '');
+    if (hasHeader && hasData) {
+      colIdxs.push(c);
+      headers.push(String(h).trim());
+    } else if (hasData && !hasHeader) {
+      colIdxs.push(c);
+      headers.push('Column ' + (c + 1));
+    }
+  }
+
+  // Deduplicate header names.
+  const seen = {};
+  for (let i = 0; i < headers.length; i++) {
+    const base = headers[i];
+    if (seen[base] === undefined) seen[base] = 1;
+    else { seen[base] += 1; headers[i] = base + ' (' + seen[base] + ')'; }
+  }
+
+  const rows = [];
+  for (const r of dataRows) {
+    let any = false;
+    const obj = {};
+    for (let i = 0; i < colIdxs.length; i++) {
+      const v = r[colIdxs[i]];
+      if (v !== null && v !== undefined && v !== '') any = true;
+      obj[headers[i]] = (v === undefined ? null : v);
+    }
+    if (any) rows.push(obj);
+  }
+
+  if (rows.length === 0 || headers.length === 0) return null;
+
+  const schema = detectSchema(rows, headers);
+  const roles = detectRoles(headers, schema);
+  return { rows, columns: headers, schema, roles };
+}
+
+/* ---------- SCHEMA + ROLE DETECTION --------------------------------- */
+function detectSchema(rows, columns) {
+  const schema = {};
+  const n = rows.length;
+  for (const col of columns) {
+    const values = rows.map(r => r[col]).filter(v => v !== null && v !== undefined && v !== '');
+    const nonNullCount = values.length;
+    if (nonNullCount === 0) { schema[col] = { type: 'empty', nonNull: 0 }; continue; }
+
+    let dateHits = 0;
+    const asDates = [];
+    for (const v of values) { const d = coerceDate(v); if (d) { dateHits++; asDates.push(d); } }
+
+    let numHits = 0;
+    const asNumbers = [];
+    for (const v of values) { const x = coerceNumber(v); if (x !== null) { numHits++; asNumbers.push(x); } }
+
+    const dateRatio = dateHits / nonNullCount;
+    const numRatio = numHits / nonNullCount;
+    const uniqVals = new Set(values.map(v => String(v))).size;
+
+    if (dateRatio >= 0.7 && nonNullCount >= 2) {
+      schema[col] = {
+        type: 'date', nonNull: nonNullCount, dates: asDates,
+        min: new Date(Math.min(...asDates.map(d => d.getTime()))),
+        max: new Date(Math.max(...asDates.map(d => d.getTime()))),
+      };
+    } else if (numRatio >= 0.7) {
+      const sum = asNumbers.reduce((a, b) => a + b, 0);
+      const sorted = [...asNumbers].sort((a, b) => a - b);
+      schema[col] = {
+        type: 'number', nonNull: nonNullCount,
+        sum, mean: sum / asNumbers.length,
+        min: sorted[0], max: sorted[sorted.length - 1],
+        isInt: asNumbers.every(v => Number.isInteger(v)),
+      };
+    } else if (uniqVals <= 50 && uniqVals / n < 0.5 && uniqVals > 1) {
+      const counts = {};
+      for (const v of values) { const k = String(v); counts[k] = (counts[k] || 0) + 1; }
+      schema[col] = {
+        type: 'category', nonNull: nonNullCount, unique: uniqVals,
+        values: Object.entries(counts).sort((a, b) => b[1] - a[1]).map(([k, c]) => ({ value: k, count: c })),
+      };
+    } else {
+      schema[col] = { type: 'identifier', nonNull: nonNullCount, unique: uniqVals };
+    }
+  }
+  return schema;
+}
+
+function detectRoles(columns, schema) {
+  const roles = {};
+  // First pass: header-name matching.
+  for (const col of columns) {
+    let role = null;
+    for (const p of ROLE_PATTERNS) {
+      if (p.match.test(col)) { role = p.role; break; }
+    }
+    if (role) roles[col] = role;
+  }
+  // Second pass: type-based fallbacks.
+  for (const col of columns) {
+    if (roles[col]) continue;
+    const t = schema[col]?.type;
+    if (t === 'date') roles[col] = 'date';
+    else if (t === 'number') roles[col] = 'metric';
+    else if (t === 'category') roles[col] = 'dimension';
+    else roles[col] = 'identifier';
+  }
+  // Promotion: if pounds_in or pounds_out wasn't named but two number columns
+  // exist and one header contains 'received'/'donat' and one 'distrib', the
+  // header-pass would have caught it. No further promotion needed.
+  return roles;
+}
+
+/* Find first column with a given role. */
+function colByRole(role) {
+  const s = state.sheets[state.activeSheet];
+  if (!s) return null;
+  for (const c of s.columns) if (s.roles[c] === role) return c;
+  return null;
+}
+function colsByRole(role) {
+  const s = state.sheets[state.activeSheet];
+  if (!s) return [];
+  return s.columns.filter(c => s.roles[c] === role);
+}
+
+/* ---------- FILTERING ----------------------------------------------- */
+function applyFilters(rows) {
+  const s = state.sheets[state.activeSheet];
+  if (!s) return [];
+  const result = [];
+  outer: for (const r of rows) {
+    for (const col in state.filters) {
+      const f = state.filters[col];
+      const v = r[col];
+      if (f.selected) {
+        if (v === null || v === undefined || v === '') continue outer;
+        if (!f.selected.has(String(v))) continue outer;
+      }
+      if (f.min !== undefined || f.max !== undefined) {
+        const d = coerceDate(v);
+        if (!d) continue outer;
+        if (f.min !== undefined && d < f.min) continue outer;
+        if (f.max !== undefined && d > f.max) continue outer;
+      }
+    }
+    result.push(r);
+  }
+  return result;
+}
+
+function clearFilters() {
+  state.filters = {};
+  $$('#filtersList input[type="checkbox"]').forEach(cb => cb.checked = false);
+  $$('#filtersList input.filter-date').forEach(d => d.value = '');
+  renderViews();
+  renderRowCount();
+}
+
+/* ---------- RENDER: SCAFFOLD ---------------------------------------- */
+function renderDashboard() {
+  const sheet = state.sheets[state.activeSheet];
+  $('#dashTitle').textContent = state.fileName || 'Untitled';
+  const sheetCount = Object.keys(state.sheets).length;
+  $('#dashMeta').textContent =
+    sheet.rows.length.toLocaleString() + ' rows / ' +
+    sheet.columns.length + ' columns / ' +
+    sheetCount + ' sheet' + (sheetCount === 1 ? '' : 's');
+
+  renderSchemaSummary();
+  renderAudienceTabs();
+  renderSheetTabs();
+  renderViewTabs();
+  renderFilters();
+  renderViews();
+  renderRowCount();
+}
+
+function renderSchemaSummary() {
+  const sheet = state.sheets[state.activeSheet];
+  const summary = $('#schemaSummary');
+  summary.innerHTML = '';
+  const counts = {};
+  for (const col in sheet.roles) {
+    const r = sheet.roles[col];
+    counts[r] = (counts[r] || 0) + 1;
+  }
+  const order = ['date', 'department', 'donor', 'donor_type', 'recipient', 'pounds_in', 'pounds_out', 'pounds', 'items', 'households', 'metric', 'dimension', 'note', 'identifier'];
+  const labels = {
+    date: 'date', department: 'department', donor: 'donor', donor_type: 'donor type',
+    recipient: 'recipient site', pounds_in: 'pounds received', pounds_out: 'pounds out',
+    pounds: 'pounds', items: 'items', households: 'households served',
+    metric: 'metric', dimension: 'dimension', note: 'note', identifier: 'identifier',
+  };
+  for (const r of order) {
+    if (!counts[r]) continue;
+    const chip = el('div', { cls: 'schema-chip', html: `${labels[r]}: <strong>${counts[r]}</strong>` });
+    summary.appendChild(chip);
+  }
+}
+
+function renderAudienceTabs() {
+  const tabs = $('#audienceTabs');
+  tabs.innerHTML = '';
+  for (const key in AUDIENCE_CONFIG) {
+    const cfg = AUDIENCE_CONFIG[key];
+    const btn = el('button', {
+      cls: 'audience-tab' + (state.audience === key ? ' is-active' : ''),
+      text: cfg.label,
+    });
+    btn.addEventListener('click', () => {
+      if (state.audience === key) return;
+      state.audience = key;
+      document.body.dataset.audience = key;
+      // If current view is hidden by new audience, switch to first allowed view.
+      if (!cfg.views.includes(state.activeView)) state.activeView = cfg.views[0];
+      renderAudienceTabs();
+      renderViewTabs();
+      renderViews();
+    });
+    tabs.appendChild(btn);
+  }
+  $('#audienceNote').innerHTML = `<strong>${AUDIENCE_CONFIG[state.audience].label}.</strong> ${AUDIENCE_CONFIG[state.audience].description}`;
+}
+
+function renderSheetTabs() {
+  const tabs = $('#sheetTabs');
+  tabs.innerHTML = '';
+  const names = Object.keys(state.sheets);
+  if (names.length <= 1) { tabs.style.display = 'none'; return; }
+  tabs.style.display = '';
+  for (const name of names) {
+    const btn = el('button', { cls: 'sheet-tab' + (name === state.activeSheet ? ' is-active' : ''), text: name });
+    btn.addEventListener('click', () => {
+      if (name === state.activeSheet) return;
+      destroyAllCharts();
+      state.activeSheet = name;
+      state.filters = {};
+      renderDashboard();
+    });
+    tabs.appendChild(btn);
+  }
+}
+
+const VIEW_DEFS = [
+  { id: 'overview',     label: 'Monthly Overview',     iconPath: 'M3 12h4l3-9 4 18 3-9h4' },
+  { id: 'departments',  label: 'Departments',          iconPath: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z' },
+  { id: 'donors',       label: 'Donor Concentration',  iconPath: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z' },
+  { id: 'distribution', label: 'Distribution',         iconPath: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10' },
+  { id: 'trends',       label: 'Trends',               iconPath: 'M23 6l-9.5 9.5-5-5L1 18M17 6h6v6' },
+  { id: 'compare',      label: 'Compare',              iconPath: 'M16 3h5v5M21 3l-7 7M8 21H3v-5M3 21l7-7' },
+  { id: 'raw',          label: 'Raw Data',             iconPath: 'M3 3h18v4H3zM3 11h18v4H3zM3 19h18v4H3z' },
+];
+
+function renderViewTabs() {
+  const tabs = $('#viewTabs');
+  tabs.innerHTML = '';
+  const allowed = AUDIENCE_CONFIG[state.audience].views;
+  for (const v of VIEW_DEFS) {
+    if (!allowed.includes(v.id)) continue;
+    const btn = el('button', {
+      cls: 'view-tab' + (state.activeView === v.id ? ' is-active' : ''),
+    });
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="${v.iconPath}" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      ${v.label}
+    `;
+    btn.addEventListener('click', () => {
+      if (state.activeView === v.id) return;
+      state.activeView = v.id;
+      renderViewTabs();
+      renderViews();
+    });
+    tabs.appendChild(btn);
+  }
+}
+
+/* ---------- FILTERS PANEL ------------------------------------------- */
+function renderFilters() {
+  const list = $('#filtersList');
+  list.innerHTML = '';
+  const sheet = state.sheets[state.activeSheet];
+
+  // Date filter first
+  const dateCol = colByRole('date');
+  if (dateCol && sheet.schema[dateCol]?.type === 'date') {
+    const g = el('div', { cls: 'filter-group' });
+    g.appendChild(el('div', { cls: 'filter-label', text: dateCol }));
+    const row = el('div', { cls: 'filter-date-row' });
+    const min = el('input', { cls: 'filter-date', attrs: { type: 'date' } });
+    const sep = el('span', { cls: 'filter-date-sep', text: 'to' });
+    const max = el('input', { cls: 'filter-date', attrs: { type: 'date' } });
+    if (state.filters[dateCol]?.min) min.value = fmtDate(state.filters[dateCol].min);
+    if (state.filters[dateCol]?.max) max.value = fmtDate(state.filters[dateCol].max);
+    const onChange = () => {
+      const f = state.filters[dateCol] = state.filters[dateCol] || {};
+      f.min = min.value ? new Date(min.value + 'T00:00:00') : undefined;
+      f.max = max.value ? new Date(max.value + 'T23:59:59') : undefined;
+      if (f.min === undefined && f.max === undefined) delete state.filters[dateCol];
+      renderViews();
+      renderRowCount();
+    };
+    min.addEventListener('change', onChange);
+    max.addEventListener('change', onChange);
+    row.appendChild(min); row.appendChild(sep); row.appendChild(max);
+    g.appendChild(row);
+    list.appendChild(g);
+  }
+
+  // Category filters: department, donor, donor_type, recipient, then any other
+  // category-typed column.
+  const priorityRoles = ['department', 'donor_type', 'donor', 'recipient'];
+  const seen = new Set();
+  const orderedCats = [];
+  for (const role of priorityRoles) {
+    for (const c of colsByRole(role)) {
+      if (sheet.schema[c]?.type === 'category' && !seen.has(c)) {
+        orderedCats.push(c); seen.add(c);
+      }
+    }
+  }
+  for (const c of sheet.columns) {
+    if (sheet.schema[c]?.type === 'category' && !seen.has(c)) {
+      // Skip identifier-coded categories like submission ID.
+      if (sheet.roles[c] === 'identifier') continue;
+      orderedCats.push(c); seen.add(c);
+    }
+  }
+
+  for (const col of orderedCats) {
+    const sch = sheet.schema[col];
+    const g = el('div', { cls: 'filter-group' });
+    const lbl = el('div', { cls: 'filter-label' });
+    lbl.innerHTML = `${col}<span class="filter-type-chip">${sheet.roles[col] || sch.type}</span>`;
+    g.appendChild(lbl);
+    if (sch.values.length > 8) {
+      const search = el('input', { cls: 'filter-search', attrs: { type: 'text', placeholder: 'Search values' } });
+      g.appendChild(search);
+      const opts = el('div', { cls: 'filter-options' });
+      g.appendChild(opts);
+      const render = (q) => {
+        opts.innerHTML = '';
+        for (const v of sch.values) {
+          if (q && !v.value.toLowerCase().includes(q.toLowerCase())) continue;
+          opts.appendChild(buildFilterOption(col, v));
+        }
+      };
+      search.addEventListener('input', () => render(search.value));
+      render('');
+    } else {
+      const opts = el('div', { cls: 'filter-options' });
+      for (const v of sch.values) opts.appendChild(buildFilterOption(col, v));
+      g.appendChild(opts);
+    }
+    list.appendChild(g);
+  }
+}
+
+function buildFilterOption(col, v) {
+  const wrap = el('label', { cls: 'filter-option' });
+  const cb = el('input', { attrs: { type: 'checkbox' } });
+  if (state.filters[col]?.selected?.has(v.value)) cb.checked = true;
+  cb.addEventListener('change', () => {
+    const f = state.filters[col] = state.filters[col] || { selected: new Set() };
+    if (!f.selected) f.selected = new Set();
+    if (cb.checked) f.selected.add(v.value); else f.selected.delete(v.value);
+    if (f.selected.size === 0) delete state.filters[col];
+    renderViews();
+    renderRowCount();
+  });
+  wrap.appendChild(cb);
+  wrap.appendChild(el('span', { cls: 'filter-option-label', text: v.value }));
+  wrap.appendChild(el('span', { cls: 'filter-option-count', text: fmtNum(v.count) }));
+  return wrap;
+}
+
+function renderRowCount() {
+  const sheet = state.sheets[state.activeSheet];
+  const filtered = applyFilters(sheet.rows);
+  $('#rowCount').innerHTML = `Showing <strong>${fmtNum(filtered.length)}</strong> of ${fmtNum(sheet.rows.length)} rows`;
+}
+
+/* ---------- VIEWS --------------------------------------------------- */
+function renderViews() {
+  destroyAllCharts();
+  const main = $('#dashMain');
+  main.innerHTML = '';
+  const view = state.activeView;
+  const sheet = state.sheets[state.activeSheet];
+  const filtered = applyFilters(sheet.rows);
+
+  if (view === 'overview')      renderOverview(main, filtered);
+  else if (view === 'departments') renderDepartments(main, filtered);
+  else if (view === 'donors')   renderDonors(main, filtered);
+  else if (view === 'distribution') renderDistribution(main, filtered);
+  else if (view === 'trends')   renderTrends(main, filtered);
+  else if (view === 'compare')  renderCompare(main, filtered);
+  else if (view === 'raw')      renderRaw(main, filtered);
+}
+
+/* ---------- METRIC HELPERS ------------------------------------------ */
+function sumCol(rows, col) {
+  if (!col) return 0;
+  let total = 0;
+  for (const r of rows) {
+    const n = coerceNumber(r[col]);
+    if (n !== null) total += n;
+  }
+  return total;
+}
+
+function countDistinct(rows, col) {
+  if (!col) return 0;
+  const s = new Set();
+  for (const r of rows) {
+    const v = r[col];
+    if (v !== null && v !== undefined && v !== '') s.add(String(v));
+  }
+  return s.size;
+}
+
+function groupByMonth(rows, dateCol) {
+  const groups = {};
+  for (const r of rows) {
+    const d = coerceDate(r[dateCol]);
+    if (!d) continue;
+    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    (groups[key] = groups[key] || []).push(r);
+  }
+  return groups;
+}
+
+function groupBy(rows, col) {
+  const groups = {};
+  for (const r of rows) {
+    const v = r[col];
+    if (v === null || v === undefined || v === '') continue;
+    const k = String(v);
+    (groups[k] = groups[k] || []).push(r);
+  }
+  return groups;
+}
+
+function sortedMonthKeys(groups) {
+  return Object.keys(groups).sort();
+}
+
+function previousMonthKey(key) {
+  const [y, m] = key.split('-').map(Number);
+  const d = new Date(y, m - 2, 1);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+}
+
+function lastNMonths(groups, n) {
+  const keys = sortedMonthKeys(groups);
+  return keys.slice(-n);
+}
+
+/* Donor anonymization helper for charts/tables. */
+function anonymizeDonor(name, idx) {
+  return 'Donor ' + String(idx + 1).padStart(2, '0');
+}
+
+/* ---------- VIEW: MONTHLY OVERVIEW ---------------------------------- */
+function renderOverview(main, rows) {
+  const sheet = state.sheets[state.activeSheet];
+  const dateCol = colByRole('date');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const poundsOut = colByRole('pounds_out');
+  const hhCol = colByRole('households');
+  const donorCol = colByRole('donor');
+  const itemsCol = colByRole('items');
+
+  // Monthly groups
+  const groups = dateCol ? groupByMonth(rows, dateCol) : {};
+  const keys = sortedMonthKeys(groups);
+  const lastKey = keys[keys.length - 1];
+  const prevKey = lastKey ? previousMonthKey(lastKey) : null;
+  const lastGroup = lastKey ? groups[lastKey] : [];
+  const prevGroup = prevKey && groups[prevKey] ? groups[prevKey] : [];
+
+  // KPIs
+  const totalIn = sumCol(rows, poundsIn);
+  const totalOut = sumCol(rows, poundsOut);
+  const totalHh = sumCol(rows, hhCol);
+  const donorCount = countDistinct(rows, donorCol);
+  const itemTotal = sumCol(rows, itemsCol);
+
+  const lastIn = sumCol(lastGroup, poundsIn);
+  const prevIn = sumCol(prevGroup, poundsIn);
+  const deltaIn = prevIn > 0 ? ((lastIn - prevIn) / prevIn) * 100 : (lastIn > 0 ? 100 : 0);
+
+  const lastOut = sumCol(lastGroup, poundsOut);
+  const prevOut = sumCol(prevGroup, poundsOut);
+  const deltaOut = prevOut > 0 ? ((lastOut - prevOut) / prevOut) * 100 : (lastOut > 0 ? 100 : 0);
+
+  const lastHh = sumCol(lastGroup, hhCol);
+  const prevHh = sumCol(prevGroup, hhCol);
+  const deltaHh = prevHh > 0 ? ((lastHh - prevHh) / prevHh) * 100 : (lastHh > 0 ? 100 : 0);
+
+  const hideKpis = AUDIENCE_CONFIG[state.audience].hideKpis;
+  const gapPct = totalIn > 0 ? ((totalIn - totalOut) / totalIn) * 100 : 0;
+
+  main.appendChild(buildSectionHeading('Headline metrics' + (lastKey ? ', most recent month: ' + fmtMonth(lastKey + '-01') : '')));
+  const kpiGrid = el('div', { cls: 'kpi-grid' });
+
+  if (poundsIn) kpiGrid.appendChild(buildKpi('Pounds received', fmtLbs(totalIn), `Last month ${fmtLbs(lastIn)}`, deltaIn));
+  if (poundsOut) kpiGrid.appendChild(buildKpi('Pounds distributed', fmtLbs(totalOut), `Last month ${fmtLbs(lastOut)}`, deltaOut));
+  if (hhCol) kpiGrid.appendChild(buildKpi('Households served', fmtNum(totalHh), `Last month ${fmtNum(lastHh)}`, deltaHh));
+  if (donorCol) kpiGrid.appendChild(buildKpi('Distinct donors', fmtNum(donorCount), `${countDistinct(lastGroup, donorCol)} this month`, null));
+  if (itemsCol) kpiGrid.appendChild(buildKpi('Items recorded', fmtNum(itemTotal), null, null));
+  if (poundsIn && poundsOut && !hideKpis.includes('distribution_gap')) {
+    kpiGrid.appendChild(buildKpi('Intake vs distributed', fmtPct(gapPct).replace('+', ''), 'Pounds held or unrecorded', null, true));
+  }
+
+  main.appendChild(kpiGrid);
+
+  if (dateCol && poundsIn) {
+    const card = buildChartCard('Pounds received by month', 'monthly_in', 'Monthly intake trend');
+    main.appendChild(card.card);
+    const labels = keys.map(k => fmtMonth(k + '-01'));
+    const data = keys.map(k => sumCol(groups[k], poundsIn));
+    drawLineChart(card.canvas, 'monthly_in', labels, [
+      { label: 'Pounds received', data, color: '#c19a5b' },
+    ]);
+  }
+
+  if (dateCol && poundsIn && poundsOut) {
+    const card = buildChartCard('Received vs distributed', 'in_vs_out', 'Monthly comparison');
+    main.appendChild(card.card);
+    const labels = keys.map(k => fmtMonth(k + '-01'));
+    const inData = keys.map(k => sumCol(groups[k], poundsIn));
+    const outData = keys.map(k => sumCol(groups[k], poundsOut));
+    drawBarChart(card.canvas, 'in_vs_out', labels, [
+      { label: 'Received', data: inData, color: '#c19a5b' },
+      { label: 'Distributed', data: outData, color: '#3b82f6' },
+    ]);
+  }
+}
+
+function buildSectionHeading(text) {
+  return el('div', { cls: 'section-heading', text });
+}
+
+function buildKpi(label, value, sub, delta, smaller = false) {
+  const card = el('div', { cls: 'kpi-card' });
+  card.appendChild(el('div', { cls: 'kpi-label', text: label }));
+  const v = el('div', { cls: 'kpi-value' + (smaller ? ' smaller' : ''), text: value });
+  card.appendChild(v);
+  if (delta !== null && !isNaN(delta) && isFinite(delta)) {
+    const cls = delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : 'flat';
+    const arrow = delta > 0.5 ? '↑' : delta < -0.5 ? '↓' : '→';
+    const d = el('span', { cls: 'kpi-delta ' + cls, text: `${arrow} ${fmtPct(delta)}` });
+    v.appendChild(d);
+  }
+  if (sub) card.appendChild(el('div', { cls: 'kpi-sub', text: sub }));
+  return card;
+}
+
+function buildChartCard(title, id, subtitle, fullWidth = false) {
+  const card = el('div', { cls: 'chart-card' + (fullWidth ? ' full-width' : '') });
+  const header = el('div', { cls: 'chart-card-header' });
+  const titleBlock = el('div');
+  titleBlock.appendChild(el('div', { cls: 'chart-card-title', text: title }));
+  if (subtitle) titleBlock.appendChild(el('div', { cls: 'chart-card-subtitle', text: subtitle }));
+  header.appendChild(titleBlock);
+
+  const controls = el('div', { cls: 'chart-card-controls' });
+  const exportBtn = el('button', { cls: 'icon-btn', attrs: { title: 'Export chart as PNG' } });
+  exportBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  exportBtn.addEventListener('click', () => exportChartPng(id, title));
+  controls.appendChild(exportBtn);
+  header.appendChild(controls);
+  card.appendChild(header);
+
+  const wrap = el('div', { cls: 'chart-canvas-wrap' });
+  const canvas = el('canvas');
+  wrap.appendChild(canvas);
+  card.appendChild(wrap);
+
+  // Wrap charts in a grid container in the calling code if needed.
+  return { card, canvas };
+}
+
+/* ---------- CHART DRAWING ------------------------------------------- */
+const CHART_PALETTE = [
+  '#c19a5b', '#3b82f6', '#4ade80', '#fbbf24', '#f87171',
+  '#a78bfa', '#22d3ee', '#f472b6', '#facc15', '#94a3b8',
+];
+
+const baseChartOpts = () => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      labels: { color: '#ededeb', font: { family: 'Inter, sans-serif', size: 12 }, boxWidth: 12, boxHeight: 12 },
+      position: 'bottom',
+    },
+    tooltip: {
+      backgroundColor: '#1d1d27',
+      titleColor: '#ededeb',
+      bodyColor: '#ededeb',
+      borderColor: '#353541',
+      borderWidth: 1,
+      padding: 10,
+      titleFont: { family: 'Inter, sans-serif', size: 13, weight: '600' },
+      bodyFont: { family: 'JetBrains Mono, monospace', size: 12 },
+    },
+  },
+  scales: {
+    x: {
+      ticks: { color: '#8a8a92', font: { family: 'JetBrains Mono, monospace', size: 10 }, maxRotation: 50, minRotation: 0 },
+      grid: { color: 'rgba(38,38,47,0.6)' },
+    },
+    y: {
+      ticks: { color: '#8a8a92', font: { family: 'JetBrains Mono, monospace', size: 10 } },
+      grid: { color: 'rgba(38,38,47,0.6)' },
+      beginAtZero: true,
+    },
+  },
+});
+
+function drawLineChart(canvas, id, labels, series) {
+  const ctx = canvas.getContext('2d');
+  const datasets = series.map((s, i) => ({
+    label: s.label,
+    data: s.data,
+    borderColor: s.color || CHART_PALETTE[i % CHART_PALETTE.length],
+    backgroundColor: (s.color || CHART_PALETTE[i % CHART_PALETTE.length]) + '22',
+    fill: true,
+    tension: 0.3,
+    borderWidth: 2,
+    pointRadius: 3,
+    pointHoverRadius: 5,
+    pointBackgroundColor: s.color || CHART_PALETTE[i % CHART_PALETTE.length],
+  }));
+  state.charts[id] = new Chart(ctx, { type: 'line', data: { labels, datasets }, options: baseChartOpts() });
+}
+
+function drawBarChart(canvas, id, labels, series, opts = {}) {
+  const ctx = canvas.getContext('2d');
+  const datasets = series.map((s, i) => ({
+    label: s.label,
+    data: s.data,
+    backgroundColor: s.color || CHART_PALETTE[i % CHART_PALETTE.length],
+    borderRadius: 4,
+    barPercentage: 0.85,
+    categoryPercentage: 0.75,
+  }));
+  const options = baseChartOpts();
+  if (opts.horizontal) {
+    options.indexAxis = 'y';
+    options.scales.y.grid.display = false;
+  }
+  if (opts.stacked) {
+    options.scales.x.stacked = true;
+    options.scales.y.stacked = true;
+  }
+  state.charts[id] = new Chart(ctx, { type: 'bar', data: { labels, datasets }, options });
+}
+
+function drawDoughnut(canvas, id, labels, data) {
+  const ctx = canvas.getContext('2d');
+  state.charts[id] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: labels.map((_, i) => CHART_PALETTE[i % CHART_PALETTE.length]),
+        borderColor: '#15151d',
+        borderWidth: 2,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '60%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: '#ededeb', font: { family: 'Inter, sans-serif', size: 12 }, boxWidth: 12, boxHeight: 12 },
+        },
+        tooltip: baseChartOpts().plugins.tooltip,
+      },
+    },
+  });
+}
+
+function exportChartPng(id, title) {
+  const chart = state.charts[id];
+  if (!chart) return showToast('Chart not available.');
+  // Render onto a backed canvas with dark background for export.
+  const src = chart.canvas;
+  const out = document.createElement('canvas');
+  out.width = src.width;
+  out.height = src.height;
+  const ctx = out.getContext('2d');
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, out.width, out.height);
+  ctx.drawImage(src, 0, 0);
+  out.toBlob((blob) => {
+    const safe = (title || id).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+    downloadBlob(blob, `pantry-${safe}.png`);
+    showToast('Chart exported.');
+  }, 'image/png');
+}
+
+/* ---------- VIEW: DEPARTMENTS --------------------------------------- */
+function renderDepartments(main, rows) {
+  const deptCol = colByRole('department');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const poundsOut = colByRole('pounds_out');
+  const hhCol = colByRole('households');
+  const itemsCol = colByRole('items');
+
+  if (!deptCol) {
+    main.appendChild(emptyState('No department column detected.', 'The dashboard looks for headers like "Department," "Category," or "Food Type."'));
+    return;
+  }
+
+  main.appendChild(buildSectionHeading('Departments at a glance'));
+
+  const grouped = groupBy(rows, deptCol);
+  const depts = Object.keys(grouped).sort((a, b) => sumCol(grouped[b], poundsIn) - sumCol(grouped[a], poundsIn));
+
+  // Per-department KPI bar
+  const summaryTable = el('div', { cls: 'chart-card full-width' });
+  const tableWrap = el('div', { cls: 'table-scroll' });
+  const t = el('table', { cls: 'rank-table' });
+  t.innerHTML = `
+    <thead>
+      <tr>
+        <th></th>
+        <th>Department</th>
+        <th class="num">Records</th>
+        ${poundsIn ? '<th class="num">Pounds received</th>' : ''}
+        ${poundsOut ? '<th class="num">Pounds distributed</th>' : ''}
+        ${hhCol ? '<th class="num">Households</th>' : ''}
+        ${itemsCol ? '<th class="num">Items</th>' : ''}
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = t.querySelector('tbody');
+  depts.forEach((d, i) => {
+    const g = grouped[d];
+    const tr = el('tr');
+    tr.innerHTML = `
+      <td class="rank-pos">#${i + 1}</td>
+      <td>${d}</td>
+      <td class="num">${fmtNum(g.length)}</td>
+      ${poundsIn ? `<td class="num">${fmtLbs(sumCol(g, poundsIn))}</td>` : ''}
+      ${poundsOut ? `<td class="num">${fmtLbs(sumCol(g, poundsOut))}</td>` : ''}
+      ${hhCol ? `<td class="num">${fmtNum(sumCol(g, hhCol))}</td>` : ''}
+      ${itemsCol ? `<td class="num">${fmtNum(sumCol(g, itemsCol))}</td>` : ''}
+    `;
+    tbody.appendChild(tr);
+  });
+  tableWrap.appendChild(t);
+  summaryTable.appendChild(tableWrap);
+  main.appendChild(summaryTable);
+
+  main.appendChild(buildSectionHeading('Department comparison charts'));
+  const grid = el('div', { cls: 'charts-grid' });
+  main.appendChild(grid);
+
+  if (poundsIn) {
+    const card = buildChartCard('Pounds received by department', 'dept_in', 'Filtered period total');
+    grid.appendChild(card.card);
+    const labels = depts;
+    const data = depts.map(d => sumCol(grouped[d], poundsIn));
+    drawBarChart(card.canvas, 'dept_in', labels, [{ label: 'Pounds received', data, color: '#c19a5b' }], { horizontal: true });
+  }
+  if (poundsOut) {
+    const card = buildChartCard('Pounds distributed by department', 'dept_out', 'Filtered period total');
+    grid.appendChild(card.card);
+    const labels = depts;
+    const data = depts.map(d => sumCol(grouped[d], poundsOut));
+    drawBarChart(card.canvas, 'dept_out', labels, [{ label: 'Pounds distributed', data, color: '#3b82f6' }], { horizontal: true });
+  }
+
+  // Department mix doughnut.
+  if (poundsIn) {
+    const card = buildChartCard('Intake mix by department', 'dept_mix', 'Share of total pounds received');
+    grid.appendChild(card.card);
+    drawDoughnut(card.canvas, 'dept_mix', depts, depts.map(d => sumCol(grouped[d], poundsIn)));
+  }
+
+  // Monthly stacked: department over time.
+  const dateCol = colByRole('date');
+  if (dateCol && poundsIn) {
+    const card = buildChartCard('Department mix over time', 'dept_time', 'Monthly stacked pounds received', '');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const monthly = groupByMonth(rows, dateCol);
+    const keys = sortedMonthKeys(monthly);
+    const labels = keys.map(k => fmtMonth(k + '-01'));
+    const topDepts = depts.slice(0, 8);
+    const series = topDepts.map((d, i) => ({
+      label: d,
+      data: keys.map(k => sumCol((monthly[k] || []).filter(r => String(r[deptCol]) === d), poundsIn)),
+      color: CHART_PALETTE[i % CHART_PALETTE.length],
+    }));
+    drawBarChart(card.canvas, 'dept_time', labels, series, { stacked: true });
+  }
+}
+
+/* ---------- VIEW: DONORS -------------------------------------------- */
+function renderDonors(main, rows) {
+  const donorCol = colByRole('donor');
+  const donorTypeCol = colByRole('donor_type');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const dateCol = colByRole('date');
+  const cfg = AUDIENCE_CONFIG[state.audience];
+
+  if (!donorCol) {
+    main.appendChild(emptyState('No donor column detected.', 'The dashboard looks for headers like "Donor," "Source," "Partner," or "Organization."'));
+    return;
+  }
+
+  main.appendChild(buildSectionHeading('Donor concentration'));
+
+  // KPIs: donor count, top10 share, repeat-donor rate, donor diversity (HHI)
+  const grouped = groupBy(rows, donorCol);
+  const donors = Object.entries(grouped).map(([name, gs]) => ({
+    name,
+    rows: gs,
+    pounds: poundsIn ? sumCol(gs, poundsIn) : 0,
+    months: dateCol ? new Set(gs.map(r => {
+      const d = coerceDate(r[dateCol]);
+      return d ? d.getFullYear() + '-' + (d.getMonth() + 1) : null;
+    }).filter(Boolean)).size : 0,
+  })).sort((a, b) => b.pounds - a.pounds);
+
+  const totalPounds = donors.reduce((acc, d) => acc + d.pounds, 0);
+  const top10Pounds = donors.slice(0, 10).reduce((acc, d) => acc + d.pounds, 0);
+  const top10Share = totalPounds > 0 ? (top10Pounds / totalPounds) * 100 : 0;
+  const repeatDonors = donors.filter(d => d.months >= 2).length;
+  const repeatRate = donors.length > 0 ? (repeatDonors / donors.length) * 100 : 0;
+  // Herfindahl-Hirschman Index normalized 0-1.
+  const hhi = totalPounds > 0
+    ? donors.reduce((acc, d) => acc + Math.pow(d.pounds / totalPounds, 2), 0)
+    : 0;
+  const diversity = 1 - hhi;
+
+  const kpiGrid = el('div', { cls: 'kpi-grid' });
+  kpiGrid.appendChild(buildKpi('Distinct donors', fmtNum(donors.length), `${repeatDonors} repeat`, null));
+  kpiGrid.appendChild(buildKpi('Top-10 share', fmtPct(top10Share).replace('+', ''), 'Of total pounds received', null, true));
+  kpiGrid.appendChild(buildKpi('Repeat-donor rate', fmtPct(repeatRate).replace('+', ''), 'Active in 2+ months', null, true));
+  kpiGrid.appendChild(buildKpi('Donor diversity', diversity.toFixed(3), '1 = even spread, 0 = single source', null, true));
+  main.appendChild(kpiGrid);
+
+  // Top 10 donors table
+  main.appendChild(buildSectionHeading('Top 10 donors by volume'));
+  const tableCard = el('div', { cls: 'chart-card full-width' });
+  const wrap = el('div', { cls: 'table-scroll' });
+  const t = el('table', { cls: 'rank-table' });
+  const maxP = donors[0]?.pounds || 1;
+  t.innerHTML = `
+    <thead>
+      <tr>
+        <th></th>
+        <th>Donor</th>
+        <th class="num">Pounds</th>
+        <th class="num">Months active</th>
+        <th class="num">Share</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tbody = t.querySelector('tbody');
+  donors.slice(0, 10).forEach((d, i) => {
+    const share = totalPounds > 0 ? (d.pounds / totalPounds) * 100 : 0;
+    const widthPct = (d.pounds / maxP) * 100;
+    const displayName = cfg.anonymizeDonors ? anonymizeDonor(d.name, i) : d.name;
+    const tr = el('tr');
+    tr.innerHTML = `
+      <td class="rank-pos">#${i + 1}</td>
+      <td>
+        <div class="${cfg.anonymizeDonors ? 'pii-cell' : ''}">${displayName}</div>
+        <div class="rank-bar"><div class="rank-bar-fill" style="width:${widthPct}%"></div></div>
+      </td>
+      <td class="num">${fmtLbs(d.pounds)}</td>
+      <td class="num">${fmtNum(d.months)}</td>
+      <td class="num">${share.toFixed(1)}%</td>
+    `;
+    tbody.appendChild(tr);
+  });
+  wrap.appendChild(t);
+  tableCard.appendChild(wrap);
+  main.appendChild(tableCard);
+
+  // Charts
+  main.appendChild(buildSectionHeading('Donor mix'));
+  const grid = el('div', { cls: 'charts-grid' });
+  main.appendChild(grid);
+
+  if (!cfg.hideCharts.includes('top_donors') && poundsIn) {
+    const card = buildChartCard('Top 10 donors by pounds', 'top_donors', 'Filtered period total');
+    grid.appendChild(card.card);
+    const labels = donors.slice(0, 10).map((d, i) => cfg.anonymizeDonors ? anonymizeDonor(d.name, i) : d.name);
+    const data = donors.slice(0, 10).map(d => d.pounds);
+    drawBarChart(card.canvas, 'top_donors', labels, [{ label: 'Pounds', data, color: '#c19a5b' }], { horizontal: true });
+  }
+
+  if (donorTypeCol && !cfg.hideCharts.includes('donor_type_mix')) {
+    const card = buildChartCard('Donor type mix', 'donor_type_mix', 'Share of pounds received');
+    grid.appendChild(card.card);
+    const typeGroups = groupBy(rows, donorTypeCol);
+    const labels = Object.keys(typeGroups);
+    const data = labels.map(t => poundsIn ? sumCol(typeGroups[t], poundsIn) : typeGroups[t].length);
+    drawDoughnut(card.canvas, 'donor_type_mix', labels, data);
+  }
+}
+
+/* ---------- VIEW: DISTRIBUTION -------------------------------------- */
+function renderDistribution(main, rows) {
+  const siteCol = colByRole('recipient');
+  const poundsOut = colByRole('pounds_out');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const hhCol = colByRole('households');
+  const dateCol = colByRole('date');
+
+  if (!siteCol && !poundsOut) {
+    main.appendChild(emptyState('No distribution columns detected.', 'The dashboard looks for headers like "Recipient Site," "Distribution Site," or "Distributed Pounds."'));
+    return;
+  }
+
+  // Filter to rows with any distribution info.
+  const distRows = rows.filter(r =>
+    (poundsOut && coerceNumber(r[poundsOut]) !== null) ||
+    (siteCol && r[siteCol]) ||
+    (hhCol && coerceNumber(r[hhCol]) !== null)
+  );
+
+  main.appendChild(buildSectionHeading(`Distribution analytics: ${fmtNum(distRows.length)} distribution records`));
+
+  const totalIn = poundsIn ? sumCol(rows, poundsIn) : 0;
+  const totalOut = poundsOut ? sumCol(distRows, poundsOut) : 0;
+  const totalHh = hhCol ? sumCol(distRows, hhCol) : 0;
+  const sites = siteCol ? countDistinct(distRows, siteCol) : 0;
+  const efficiency = totalIn > 0 ? (totalOut / totalIn) * 100 : 0;
+
+  const kpiGrid = el('div', { cls: 'kpi-grid' });
+  if (poundsOut) kpiGrid.appendChild(buildKpi('Distributed pounds', fmtLbs(totalOut), null, null));
+  if (totalIn > 0 && poundsOut) kpiGrid.appendChild(buildKpi('Distribution rate', fmtPct(efficiency).replace('+', ''), 'Of pounds received', null, true));
+  if (hhCol) kpiGrid.appendChild(buildKpi('Households served', fmtNum(totalHh), null, null));
+  if (siteCol) kpiGrid.appendChild(buildKpi('Active sites', fmtNum(sites), 'Distinct recipient locations', null));
+  if (poundsOut && hhCol && totalHh > 0) {
+    kpiGrid.appendChild(buildKpi('Lbs per household', fmtNum(totalOut / totalHh, 1), 'Across all distributions', null, true));
+  }
+  main.appendChild(kpiGrid);
+
+  main.appendChild(buildSectionHeading('Distribution charts'));
+  const grid = el('div', { cls: 'charts-grid' });
+  main.appendChild(grid);
+
+  if (siteCol && poundsOut && !AUDIENCE_CONFIG[state.audience].hideCharts.includes('site_distribution')) {
+    const card = buildChartCard('Pounds distributed by site', 'site_distribution', 'Filtered period total');
+    grid.appendChild(card.card);
+    const grouped = groupBy(distRows, siteCol);
+    const sorted = Object.entries(grouped).sort((a, b) => sumCol(b[1], poundsOut) - sumCol(a[1], poundsOut));
+    const labels = sorted.map(s => s[0]);
+    const data = sorted.map(s => sumCol(s[1], poundsOut));
+    drawBarChart(card.canvas, 'site_distribution', labels, [{ label: 'Pounds', data, color: '#3b82f6' }], { horizontal: true });
+  }
+
+  if (siteCol && hhCol) {
+    const card = buildChartCard('Households served by site', 'site_hh', 'Filtered period total');
+    grid.appendChild(card.card);
+    const grouped = groupBy(distRows, siteCol);
+    const sorted = Object.entries(grouped).sort((a, b) => sumCol(b[1], hhCol) - sumCol(a[1], hhCol));
+    const labels = sorted.map(s => s[0]);
+    const data = sorted.map(s => sumCol(s[1], hhCol));
+    drawBarChart(card.canvas, 'site_hh', labels, [{ label: 'Households', data, color: '#4ade80' }], { horizontal: true });
+  }
+
+  if (dateCol && poundsOut) {
+    const card = buildChartCard('Distribution over time', 'dist_time', 'Monthly pounds distributed');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const monthly = groupByMonth(distRows, dateCol);
+    const keys = sortedMonthKeys(monthly);
+    const labels = keys.map(k => fmtMonth(k + '-01'));
+    const data = keys.map(k => sumCol(monthly[k], poundsOut));
+    drawLineChart(card.canvas, 'dist_time', labels, [{ label: 'Pounds distributed', data, color: '#3b82f6' }]);
+  }
+
+  if (dateCol && poundsIn && poundsOut) {
+    const card = buildChartCard('Intake-to-distribution gap', 'dist_gap', 'Pounds received minus pounds distributed by month');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const monthlyIn = groupByMonth(rows, dateCol);
+    const monthlyOut = groupByMonth(distRows, dateCol);
+    const keys = sortedMonthKeys(monthlyIn);
+    const labels = keys.map(k => fmtMonth(k + '-01'));
+    const inData = keys.map(k => sumCol(monthlyIn[k] || [], poundsIn));
+    const outData = keys.map(k => sumCol(monthlyOut[k] || [], poundsOut));
+    const gap = inData.map((v, i) => v - outData[i]);
+    drawBarChart(card.canvas, 'dist_gap', labels, [{ label: 'Gap (received - distributed)', data: gap, color: '#fbbf24' }]);
+  }
+}
+
+/* ---------- VIEW: TRENDS -------------------------------------------- */
+function rolling(arr, window) {
+  const out = [];
+  for (let i = 0; i < arr.length; i++) {
+    const slice = arr.slice(Math.max(0, i - window + 1), i + 1);
+    out.push(slice.reduce((a, b) => a + b, 0) / slice.length);
+  }
+  return out;
+}
+
+function renderTrends(main, rows) {
+  const dateCol = colByRole('date');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const poundsOut = colByRole('pounds_out');
+  const hhCol = colByRole('households');
+
+  if (!dateCol) {
+    main.appendChild(emptyState('No date column detected.', 'Trend lines require a date column to group by month.'));
+    return;
+  }
+
+  main.appendChild(buildSectionHeading('Rolling trends'));
+
+  const monthly = groupByMonth(rows, dateCol);
+  const keys = sortedMonthKeys(monthly);
+  const labels = keys.map(k => fmtMonth(k + '-01'));
+
+  const grid = el('div', { cls: 'charts-grid' });
+  main.appendChild(grid);
+
+  if (poundsIn) {
+    const card = buildChartCard('Pounds received: 3- and 6-month rolling mean', 'roll_in', 'Smooths month-to-month noise');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const raw = keys.map(k => sumCol(monthly[k], poundsIn));
+    drawLineChart(card.canvas, 'roll_in', labels, [
+      { label: 'Monthly', data: raw, color: '#5e5e66' },
+      { label: '3-month mean', data: rolling(raw, 3), color: '#c19a5b' },
+      { label: '6-month mean', data: rolling(raw, 6), color: '#3b82f6' },
+    ]);
+  }
+
+  if (poundsOut) {
+    const card = buildChartCard('Pounds distributed: 3- and 6-month rolling mean', 'roll_out', 'Smooths month-to-month noise');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const raw = keys.map(k => sumCol(monthly[k], poundsOut));
+    drawLineChart(card.canvas, 'roll_out', labels, [
+      { label: 'Monthly', data: raw, color: '#5e5e66' },
+      { label: '3-month mean', data: rolling(raw, 3), color: '#c19a5b' },
+      { label: '6-month mean', data: rolling(raw, 6), color: '#3b82f6' },
+    ]);
+  }
+
+  if (hhCol) {
+    const card = buildChartCard('Households served: 3-month rolling mean', 'roll_hh', 'Smooths month-to-month noise');
+    card.card.classList.add('full-width');
+    grid.appendChild(card.card);
+    const raw = keys.map(k => sumCol(monthly[k], hhCol));
+    drawLineChart(card.canvas, 'roll_hh', labels, [
+      { label: 'Monthly', data: raw, color: '#5e5e66' },
+      { label: '3-month mean', data: rolling(raw, 3), color: '#4ade80' },
+    ]);
+  }
+
+  // Seasonal note panel.
+  if (keys.length >= 6) {
+    const recent = keys.slice(-3);
+    const recentIn = poundsIn ? recent.reduce((a, k) => a + sumCol(monthly[k], poundsIn), 0) / recent.length : 0;
+    const prior = keys.slice(0, -3);
+    const priorIn = poundsIn && prior.length ? prior.reduce((a, k) => a + sumCol(monthly[k], poundsIn), 0) / prior.length : 0;
+    const delta = priorIn > 0 ? ((recentIn - priorIn) / priorIn) * 100 : 0;
+    const cls = delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : 'flat';
+    const note = el('div', { cls: 'chart-card full-width' });
+    note.innerHTML = `
+      <div class="chart-card-header">
+        <div>
+          <div class="chart-card-title">Seasonality read</div>
+          <div class="chart-card-subtitle">Recent 3 months vs prior period</div>
+        </div>
+      </div>
+      <p style="color:var(--text-dim); font-size:14px; line-height:1.6;">
+        ${poundsIn ? `Recent 3-month average intake is ${fmtLbs(recentIn)}/mo, vs the prior period at ${fmtLbs(priorIn)}/mo. <span class="kpi-delta ${cls}">${fmtPct(delta)}</span>` : 'No intake column detected for seasonal analysis.'}
+      </p>
+    `;
+    main.appendChild(note);
+  }
+}
+
+/* ---------- VIEW: COMPARE ------------------------------------------- */
+function renderCompare(main, rows) {
+  const dateCol = colByRole('date');
+  const poundsIn = colByRole('pounds_in') || colByRole('pounds');
+  const poundsOut = colByRole('pounds_out');
+  const hhCol = colByRole('households');
+  const donorCol = colByRole('donor');
+
+  if (!dateCol) {
+    main.appendChild(emptyState('No date column detected.', 'Comparison view requires a date column.'));
+    return;
+  }
+  main.appendChild(buildSectionHeading('This month vs last month, this year vs last year'));
+
+  const monthly = groupByMonth(rows, dateCol);
+  const keys = sortedMonthKeys(monthly);
+  if (keys.length === 0) {
+    main.appendChild(emptyState('No dated rows in the filter.', 'Clear filters or expand the date range.'));
+    return;
+  }
+  const lastKey = keys[keys.length - 1];
+  const prevKey = previousMonthKey(lastKey);
+  const lastGroup = monthly[lastKey] || [];
+  const prevGroup = monthly[prevKey] || [];
+
+  // YoY: same calendar month one year earlier.
+  const [ly, lm] = lastKey.split('-').map(Number);
+  const yoyKey = (ly - 1) + '-' + String(lm).padStart(2, '0');
+  const yoyGroup = monthly[yoyKey] || [];
+
+  // Year-to-date and prior YTD
+  const currentYear = ly;
+  const ytdRows = rows.filter(r => {
+    const d = coerceDate(r[dateCol]);
+    return d && d.getFullYear() === currentYear;
+  });
+  const priorYtdRows = rows.filter(r => {
+    const d = coerceDate(r[dateCol]);
+    return d && d.getFullYear() === (currentYear - 1) && d.getMonth() < lm;
+  });
+
+  const grid = el('div', { cls: 'compare-grid' });
+  main.appendChild(grid);
+
+  grid.appendChild(buildCompareCard(
+    'Month over month',
+    `${fmtMonth(lastKey + '-01')} vs ${fmtMonth(prevKey + '-01')}`,
+    lastGroup,
+    prevGroup,
+    { poundsIn, poundsOut, hhCol, donorCol }
+  ));
+  grid.appendChild(buildCompareCard(
+    'Year over year (same month)',
+    `${fmtMonth(lastKey + '-01')} vs ${fmtMonth(yoyKey + '-01')}`,
+    lastGroup,
+    yoyGroup,
+    { poundsIn, poundsOut, hhCol, donorCol }
+  ));
+  grid.appendChild(buildCompareCard(
+    'Year to date',
+    `${currentYear} YTD vs ${currentYear - 1} YTD (same span)`,
+    ytdRows,
+    priorYtdRows,
+    { poundsIn, poundsOut, hhCol, donorCol }
+  ));
+
+  // Side-by-side bar chart.
+  main.appendChild(buildSectionHeading('Side by side'));
+  const grid2 = el('div', { cls: 'charts-grid' });
+  main.appendChild(grid2);
+
+  if (poundsIn) {
+    const card = buildChartCard('Pounds received: this month, last month, year ago', 'compare_in', '');
+    grid2.appendChild(card.card);
+    const labels = [fmtMonth(prevKey + '-01'), fmtMonth(lastKey + '-01'), fmtMonth(yoyKey + '-01')];
+    const data = [sumCol(prevGroup, poundsIn), sumCol(lastGroup, poundsIn), sumCol(yoyGroup, poundsIn)];
+    drawBarChart(card.canvas, 'compare_in', labels, [{ label: 'Pounds received', data, color: '#c19a5b' }]);
+  }
+  if (poundsOut) {
+    const card = buildChartCard('Pounds distributed: this month, last month, year ago', 'compare_out', '');
+    grid2.appendChild(card.card);
+    const labels = [fmtMonth(prevKey + '-01'), fmtMonth(lastKey + '-01'), fmtMonth(yoyKey + '-01')];
+    const data = [sumCol(prevGroup, poundsOut), sumCol(lastGroup, poundsOut), sumCol(yoyGroup, poundsOut)];
+    drawBarChart(card.canvas, 'compare_out', labels, [{ label: 'Pounds distributed', data, color: '#3b82f6' }]);
+  }
+}
+
+function buildCompareCard(title, period, currRows, prevRows, cols) {
+  const card = el('div', { cls: 'compare-card' });
+  card.appendChild(el('div', { cls: 'compare-period', text: period }));
+  card.appendChild(el('div', { cls: 'compare-title', text: title }));
+  const rows = [];
+  if (cols.poundsIn) rows.push({ label: 'Pounds received', curr: sumCol(currRows, cols.poundsIn), prev: sumCol(prevRows, cols.poundsIn), fmt: fmtLbs });
+  if (cols.poundsOut) rows.push({ label: 'Pounds distributed', curr: sumCol(currRows, cols.poundsOut), prev: sumCol(prevRows, cols.poundsOut), fmt: fmtLbs });
+  if (cols.hhCol) rows.push({ label: 'Households served', curr: sumCol(currRows, cols.hhCol), prev: sumCol(prevRows, cols.hhCol), fmt: (n) => fmtNum(n) });
+  if (cols.donorCol) rows.push({ label: 'Distinct donors', curr: countDistinct(currRows, cols.donorCol), prev: countDistinct(prevRows, cols.donorCol), fmt: (n) => fmtNum(n) });
+  rows.push({ label: 'Records', curr: currRows.length, prev: prevRows.length, fmt: (n) => fmtNum(n) });
+
+  for (const r of rows) {
+    const delta = r.prev > 0 ? ((r.curr - r.prev) / r.prev) * 100 : (r.curr > 0 ? 100 : 0);
+    const cls = delta > 0.5 ? 'up' : delta < -0.5 ? 'down' : 'flat';
+    const arrow = delta > 0.5 ? '↑' : delta < -0.5 ? '↓' : '→';
+    const line = el('div', { cls: 'compare-row' });
+    line.innerHTML = `
+      <span class="compare-row-label">${r.label}</span>
+      <span class="compare-row-value">
+        ${r.fmt(r.curr)}
+        <span class="kpi-delta ${cls}" style="margin-left:6px;">${arrow} ${fmtPct(delta)}</span>
+      </span>
+    `;
+    card.appendChild(line);
+  }
+  return card;
+}
+
+/* ---------- VIEW: RAW DATA ------------------------------------------ */
+function renderRaw(main, rows) {
+  const cfg = AUDIENCE_CONFIG[state.audience];
+  if (!cfg.showRawRows) {
+    main.appendChild(emptyState('Row-level data is hidden in this audience mode.', `Switch the audience toggle above to "Internal staff" or "Donors" to view individual rows.`));
+    return;
+  }
+
+  const sheet = state.sheets[state.activeSheet];
+  const visibleCols = sheet.columns.filter(c => {
+    const role = sheet.roles[c];
+    if (role === 'identifier' && cfg.hideRawCols.includes('identifier')) return false;
+    if (role === 'donor' && cfg.hideRawCols.includes('donor')) return false;
+    if (role === 'recipient' && cfg.hideRawCols.includes('recipient')) return false;
+    if (role === 'note' && cfg.hideRawCols.includes('note')) return false;
+    return true;
+  });
+
+  main.appendChild(buildSectionHeading(`Raw rows: ${fmtNum(rows.length)} filtered`));
+
+  const toolbar = el('div', { cls: 'table-toolbar' });
+  const search = el('input', {
+    cls: 'table-search',
+    attrs: { type: 'text', placeholder: 'Search rows (any column)' },
+  });
+  search.value = state.tableSearch;
+  search.addEventListener('input', () => {
+    state.tableSearch = search.value;
+    repaintRawBody();
+  });
+  toolbar.appendChild(search);
+  const exportBtn = el('button', { cls: 'btn btn-sm', text: 'Export filtered CSV' });
+  exportBtn.addEventListener('click', () => exportFilteredCsv());
+  toolbar.appendChild(exportBtn);
+  main.appendChild(toolbar);
+
+  const card = el('div', { cls: 'chart-card full-width' });
+  const wrap = el('div', { cls: 'table-scroll' });
+  const t = el('table', { cls: 'data-table' });
+  const thead = el('thead');
+  const trh = el('tr');
+  for (const c of visibleCols) {
+    const th = el('th', { attrs: { 'data-col': c } });
+    const role = sheet.roles[c];
+    th.innerHTML = `${c}<span class="col-type">${role}</span><span class="sort-indicator"></span>`;
+    th.addEventListener('click', () => {
+      if (state.tableSort.col === c) state.tableSort.dir = state.tableSort.dir === 'asc' ? 'desc' : 'asc';
+      else { state.tableSort.col = c; state.tableSort.dir = 'asc'; }
+      repaintRawBody();
+    });
+    trh.appendChild(th);
+  }
+  thead.appendChild(trh);
+  t.appendChild(thead);
+  const tbody = el('tbody');
+  t.appendChild(tbody);
+  wrap.appendChild(t);
+  card.appendChild(wrap);
+  const footer = el('div', { cls: 'table-footer' });
+  card.appendChild(footer);
+  main.appendChild(card);
+
+  function repaintRawBody() {
+    let working = [...rows];
+    const q = state.tableSearch.trim().toLowerCase();
+    if (q) {
+      working = working.filter(r => visibleCols.some(c => {
+        const v = r[c];
+        return v !== null && v !== undefined && String(v).toLowerCase().includes(q);
+      }));
+    }
+    if (state.tableSort.col) {
+      const sc = state.tableSort.col;
+      const dir = state.tableSort.dir === 'asc' ? 1 : -1;
+      working.sort((a, b) => {
+        const va = a[sc]; const vb = b[sc];
+        if (va === null || va === undefined || va === '') return 1;
+        if (vb === null || vb === undefined || vb === '') return -1;
+        const na = coerceNumber(va); const nb = coerceNumber(vb);
+        if (na !== null && nb !== null) return (na - nb) * dir;
+        const da = coerceDate(va); const db = coerceDate(vb);
+        if (da && db) return (da - db) * dir;
+        return String(va).localeCompare(String(vb)) * dir;
+      });
+    }
+    // Update sort indicators
+    $$('th', thead).forEach(th => {
+      th.classList.remove('is-sorted');
+      th.querySelector('.sort-indicator').textContent = '';
+    });
+    if (state.tableSort.col) {
+      const th = thead.querySelector(`th[data-col="${CSS.escape(state.tableSort.col)}"]`);
+      if (th) {
+        th.classList.add('is-sorted');
+        th.querySelector('.sort-indicator').textContent = state.tableSort.dir === 'asc' ? '↑' : '↓';
+      }
+    }
+    tbody.innerHTML = '';
+    const cap = 500;
+    const shown = working.slice(0, cap);
+    for (const r of shown) {
+      const tr = el('tr');
+      for (const c of visibleCols) {
+        const v = r[c];
+        const td = el('td');
+        const role = sheet.roles[c];
+        if (cfg.anonymizeDonors && role === 'donor' && v) {
+          td.textContent = '[anonymized]';
+          td.classList.add('pii-cell');
+        } else if (v === null || v === undefined || v === '') {
+          td.textContent = '\u2013';
+          td.classList.add('is-empty');
+        } else if (v instanceof Date) {
+          td.textContent = fmtDate(v);
+        } else if (role === 'pounds_in' || role === 'pounds_out' || role === 'pounds') {
+          const n = coerceNumber(v);
+          td.textContent = n !== null ? fmtNum(n, n % 1 ? 1 : 0) : String(v);
+          td.style.fontVariantNumeric = 'tabular-nums';
+        } else {
+          td.textContent = String(v);
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    footer.textContent = working.length > cap
+      ? `Showing first ${fmtNum(cap)} of ${fmtNum(working.length)} matching rows.`
+      : `Showing ${fmtNum(working.length)} rows.`;
+  }
+  repaintRawBody();
+}
+
+/* ---------- CSV EXPORT ---------------------------------------------- */
+function exportFilteredCsv() {
+  const sheet = state.sheets[state.activeSheet];
+  const cfg = AUDIENCE_CONFIG[state.audience];
+  const rows = applyFilters(sheet.rows);
+  const visibleCols = sheet.columns.filter(c => {
+    const role = sheet.roles[c];
+    if (role === 'identifier' && cfg.hideRawCols.includes('identifier')) return false;
+    if (role === 'donor' && cfg.hideRawCols.includes('donor')) return false;
+    if (role === 'recipient' && cfg.hideRawCols.includes('recipient')) return false;
+    if (role === 'note' && cfg.hideRawCols.includes('note')) return false;
+    return true;
+  });
+  const escape = (v) => {
+    if (v === null || v === undefined) return '';
+    if (v instanceof Date) return fmtDate(v);
+    const s = String(v);
+    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  };
+  const lines = [];
+  lines.push(visibleCols.map(escape).join(','));
+  for (const r of rows) {
+    lines.push(visibleCols.map(c => {
+      const role = sheet.roles[c];
+      if (cfg.anonymizeDonors && role === 'donor' && r[c]) return '[anonymized]';
+      return escape(r[c]);
+    }).join(','));
+  }
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+  const safe = (state.fileName || 'pantry-data').replace(/\.[^.]+$/, '').replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  downloadBlob(blob, `${safe}-filtered-${state.audience}.csv`);
+  showToast('CSV downloaded.');
+}
+
+/* ---------- EMPTY STATE --------------------------------------------- */
+function emptyState(title, body) {
+  const e = el('div', { cls: 'empty-state' });
+  e.appendChild(el('div', { cls: 'empty-state-title', text: title }));
+  e.appendChild(el('p', { text: body }));
+  return e;
+}
+
+function renderError(title, detail) {
+  const main = $('#dashMain');
+  $('#heroSection').style.display = 'none';
+  $('#dashboard').classList.add('is-active');
+  $('#dashTitle').textContent = state.fileName || 'Untitled';
+  main.innerHTML = '';
+  const wrap = el('div', { cls: 'empty-state' });
+  wrap.appendChild(el('div', { cls: 'empty-state-title', text: title }));
+  if (detail) wrap.appendChild(el('div', { cls: 'error-detail', text: detail }));
+  const btn = el('button', { cls: 'btn btn-primary', text: 'Choose another file' });
+  btn.addEventListener('click', () => resetToUpload());
+  wrap.appendChild(btn);
+  main.appendChild(wrap);
+}
+
+/* ---------- WIRE UP ------------------------------------------------- */
+function wireUp() {
+  const dropzone = $('#dropzone');
+  const fileInput = $('#fileInput');
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) handleFile(e.target.files[0]);
+  });
+  ['dragenter', 'dragover'].forEach(ev => {
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.add('is-drag'); });
+  });
+  ['dragleave', 'drop'].forEach(ev => {
+    dropzone.addEventListener(ev, (e) => { e.preventDefault(); dropzone.classList.remove('is-drag'); });
+  });
+  dropzone.addEventListener('drop', (e) => {
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile(f);
+  });
+  $('#loadSampleBtn').addEventListener('click', loadSample);
+  $('#loadSampleNav').addEventListener('click', loadSample);
+  $('#aboutBtn').addEventListener('click', () => $('#aboutModal').classList.add('is-open'));
+  $('#aboutNav').addEventListener('click', () => $('#aboutModal').classList.add('is-open'));
+  $('#aboutClose').addEventListener('click', () => $('#aboutModal').classList.remove('is-open'));
+  $('#aboutModal').addEventListener('click', (e) => {
+    if (e.target.id === 'aboutModal') $('#aboutModal').classList.remove('is-open');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') $('#aboutModal').classList.remove('is-open');
+  });
+  $('#newFileBtn').addEventListener('click', resetToUpload);
+  $('#clearFilters').addEventListener('click', clearFilters);
+  $('#exportCsvBtn').addEventListener('click', exportFilteredCsv);
+  $('#printBtn').addEventListener('click', () => window.print());
+}
+
+document.addEventListener('DOMContentLoaded', wireUp);
+
+</script>
+</body>
+</html>

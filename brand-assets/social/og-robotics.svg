@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Null Set Labs Robotics pillar Open Graph preview">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0c14"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="slashGradient" x1="15%" y1="85%" x2="85%" y2="15%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#7d7a7a"/>
+      <stop offset="100%" stop-color="#c19a5b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c19a5b" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#c19a5b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  <circle cx="600" cy="245" r="240" fill="url(#glow)"/>
+
+  <!-- Cog icon (Lucide-derived), large and centered, brass -->
+  <g transform="translate(600 245)" fill="none" stroke="#c19a5b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- inner small circle -->
+    <circle cx="0" cy="0" r="28"/>
+    <!-- cog outer path scaled from 24px Lucide path. Built piece-by-piece with line segments + ring. -->
+    <circle cx="0" cy="0" r="118"/>
+    <!-- teeth as short radial nubs -->
+    <g stroke="#c19a5b" stroke-width="10" stroke-linecap="round">
+      <line x1="0" y1="-148" x2="0" y2="-118"/>
+      <line x1="0" y1="118" x2="0" y2="148"/>
+      <line x1="-148" y1="0" x2="-118" y2="0"/>
+      <line x1="118" y1="0" x2="148" y2="0"/>
+      <line x1="-105" y1="-105" x2="-83" y2="-83"/>
+      <line x1="83" y1="-83" x2="105" y2="-105"/>
+      <line x1="-105" y1="105" x2="-83" y2="83"/>
+      <line x1="83" y1="83" x2="105" y2="105"/>
+    </g>
+  </g>
+
+  <!-- Eyebrow: ROBOTICS in JetBrains Mono uppercase letter-spaced -->
+  <text x="600" y="430" text-anchor="middle" fill="#c19a5b" font-family="'JetBrains Mono', monospace" font-size="22" font-weight="500" letter-spacing="6">ROBOTICS</text>
+
+  <!-- Wordmark -->
+  <text x="600" y="500" text-anchor="middle" fill="#ededeb" font-family="Inter, system-ui, sans-serif" font-size="64" letter-spacing="3">
+    <tspan font-weight="800">NULL SET</tspan><tspan font-weight="400" dx="10">LABS</tspan>
+  </text>
+
+  <!-- One-line description (kept under 100 chars) -->
+  <text x="600" y="565" text-anchor="middle" fill="#8a8a92" font-family="Inter, system-ui, sans-serif" font-size="22" font-style="italic" font-weight="400">Open tools and quantitative research for the VEX competition community,</text>
+  <text x="600" y="595" text-anchor="middle" fill="#8a8a92" font-family="Inter, system-ui, sans-serif" font-size="22" font-style="italic" font-weight="400">plus lunar plant biology.</text>
+</svg>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Pantry Dashboard Open Graph preview">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0c14"/>
+      <stop offset="100%" stop-color="#0a0a0f"/>
+    </linearGradient>
+    <linearGradient id="slashGradient" x1="15%" y1="85%" x2="85%" y2="15%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#7d7a7a"/>
+      <stop offset="100%" stop-color="#c19a5b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c19a5b" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#c19a5b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  <circle cx="600" cy="200" r="220" fill="url(#glow)"/>
+
+  <g transform="translate(540 110)">
+    <circle cx="60" cy="60" r="46" fill="none" stroke="#c19a5b" stroke-width="3.5"/>
+    <line x1="24" y1="96" x2="96" y2="24" stroke="url(#slashGradient)" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <text x="600" y="290" text-anchor="middle" fill="#c19a5b" font-family="'JetBrains Mono', monospace" font-size="20" font-weight="500" letter-spacing="5">PUBLIC DELIVERABLE</text>
+
+  <text x="600" y="380" text-anchor="middle" fill="#ededeb" font-family="'Newsreader', Georgia, serif" font-size="80" font-weight="500" letter-spacing="-1">Pantry Dashboard</text>
+
+  <text x="600" y="450" text-anchor="middle" fill="#8a8a92" font-family="'Newsreader', Georgia, serif" font-size="26" font-style="italic" font-weight="400">A browser-based, audience-aware dashboard for community</text>
+  <text x="600" y="486" text-anchor="middle" fill="#8a8a92" font-family="'Newsreader', Georgia, serif" font-size="26" font-style="italic" font-weight="400">food bank intake and distribution data.</text>
+
+  <text x="600" y="570" text-anchor="middle" fill="#5e5e66" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="500" letter-spacing="3">NULL SET LABS  /  nullsetlabs.org/foodbank-dashboard</text>
+</svg>
