@@ -203,27 +203,54 @@
   .footer-bottom-right { display: flex; gap: 16px; }
 
   @media (max-width: 768px) {
-    .topnav-inner { padding: 12px 20px; gap: 12px; }
-    .nav-links { gap: 18px; font-size: 13px; }
-    .hero { padding: 64px 20px 56px; }
+    .topnav-inner { padding: 12px 16px; gap: 12px; }
+    .nav-brand { font-size: 16px; }
+    .nav-links { gap: 18px; font-size: 14px; }
+    .nav-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 4px; }
+    .hero { padding: 56px 18px 48px; }
     .hero-glyph { width: 140px; height: 140px; margin-bottom: 28px; }
-    .hero h1 { font-size: 44px; }
-    .hero-tagline-primary { font-size: 18px; }
+    .hero h1 { font-size: clamp(34px, 9vw, 44px); }
+    .hero-tagline-primary { font-size: 17px; }
     .hero-tagline-secondary { font-size: 11px; letter-spacing: 1px; }
     .hero-tagline-secondary span { margin: 0 6px; }
-    section { padding: 60px 20px; }
+    .hero-cta { padding: 14px 22px; min-height: 44px; font-size: 14px; }
+    section { padding: 56px 18px; }
+    .section-title { margin-bottom: 36px; }
     .pillars { grid-template-columns: 1fr; }
-    .pillar-content { padding: 18px 20px 20px; }
+    .pillar-content { padding: 18px 20px 22px; }
     .pillar-name { font-size: 22px; }
     .pillar-icon { width: 28px; height: 28px; }
-    .about-section { padding: 64px 20px; }
-    .about-body { font-size: 18px; }
+    .pillar-subtitle { font-size: 15px; }
+    .pillar-link { padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; }
+    .about-section { padding: 64px 18px; }
+    .about-body { font-size: 17px; }
+    .about-areas li { font-size: 17px; }
+    .about-arjun-body { font-size: 17px; }
     .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .footer-col li { font-size: 15px; }
+    .footer-col li a { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 0; }
     .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-copy { font-size: 14px; }
   }
   @media (max-width: 480px) {
+    .topnav-inner { padding: 10px 14px; gap: 10px; }
+    .nav-links { gap: 14px; }
     .nav-links a:not(:last-child) { display: none; }
-    .hero h1 { font-size: 38px; }
+    .hero { padding: 44px 16px 40px; }
+    .hero-glyph { width: 116px; height: 116px; margin-bottom: 22px; }
+    .hero h1 { font-size: clamp(30px, 10vw, 36px); }
+    .hero-tagline-primary { font-size: 16px; max-width: 100%; }
+    .hero-tagline-secondary { font-size: 10px; letter-spacing: 0.8px; }
+    section { padding: 44px 16px; }
+    .about-section { padding: 48px 16px; }
+    .pillar-content { padding: 16px 18px 20px; }
+    .pillar-card-header { gap: 10px; }
+    .pillar-chips { gap: 5px; }
+    .pillar-chip { font-size: 10px; padding: 3px 8px; }
+  }
+  @media (max-width: 360px) {
+    .hero h1 { font-size: 28px; letter-spacing: -0.5px; }
+    .pillar-name { font-size: 20px; }
   }
 </style>
 </head>
