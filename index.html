@@ -211,11 +211,14 @@
   .why-card-body strong { color: var(--accent-bright); font-weight: 600; }
 
   /* Currently active strip (mini status row under Research) */
-  .active-strip { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 40px;
+  .active-strip { display: flex; flex-wrap: wrap; gap: 14px 22px; margin-bottom: 40px;
     padding: 14px 18px; border: 1px solid var(--border); border-radius: 10px;
-    background: rgba(193, 154, 91, 0.04); }
-  .active-item { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 220px;
-    font-size: 13px; color: var(--text-dim); font-family: 'Inter', sans-serif; }
+    background: rgba(193, 154, 91, 0.04); align-items: center; }
+  .active-item { display: flex; align-items: center; gap: 10px;
+    flex: 1 1 240px; min-width: 0;
+    font-size: 13px; color: var(--text-dim); font-family: 'Inter', sans-serif;
+    line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .active-item > span:last-child { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   .active-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--live);
     box-shadow: 0 0 8px var(--live); flex-shrink: 0; }
   .active-item strong { color: var(--text); font-weight: 600; }
@@ -270,8 +273,8 @@
     .about-arjun-body { font-size: 17px; }
     .how-block { padding: 22px 20px; }
     .how-list li { font-size: 16px; }
-    .active-strip { padding: 12px 14px; }
-    .active-item { font-size: 12px; }
+    .active-strip { padding: 12px 14px; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .active-item { font-size: 12px; flex: 0 0 auto; white-space: normal; overflow: visible; text-overflow: clip; width: 100%; }
     .footer-inner { grid-template-columns: 1fr; gap: 32px; }
     .footer-col li { font-size: 15px; }
     .footer-col li a { display: inline-flex; align-items: center; min-height: 44px; padding: 6px 0; }
@@ -354,11 +357,11 @@
   <div class="active-strip" aria-label="Currently active">
     <div class="active-item">
       <span class="active-dot" aria-hidden="true"></span>
-      <span><strong>VEX Visualizer</strong> &middot; 866 high-school teams indexed for Worlds 2026</span>
+      <span><strong>VEX Visualizer</strong> &middot; 866 teams at Worlds 2026</span>
     </div>
     <div class="active-item">
       <span class="active-dot" aria-hidden="true"></span>
-      <span><strong>Pantry Dashboard</strong> &middot; public, for community pilots</span>
+      <span><strong>Pantry Dashboard</strong> &middot; public for pilots</span>
     </div>
     <div class="active-item active-item-soft">
       <span class="active-dot" aria-hidden="true"></span>
